@@ -15,7 +15,6 @@ name = screen.getstr() #get the string they typed
 name2 = "'" + name + "'" #force name into a string so it works with the SQL queries
 while True:
 	screen.refresh()
-
 	screen.addstr("\nPlease Select from the following menu:\n1)View Appointments\n2)Create Appointment\n3)Delete Appointment\n4)Exit\n")
 	event = screen.getch()
 	
@@ -38,7 +37,29 @@ while True:
 		except:
 			screen.addstr("No Advisor named: " + name + "\n")
 	elif event == ord("2"): #create appointment
-		screen.addstr("\nTo create an appointment please provide:\nThe Student's first and last name\nThe date in the form YYYY-MM-DD\nThe time using 24hour clock.\n")
+		screen.addstr("\nTo create an appointment please provide:\nThe Student's first and last name\n")
+		student_name = screen.getstr()
+		strStudent_name = "'" + student_name + "'"
+		screen.addstr("\nThe date in the form YYYY-MM-DD\n")
+		date = screen.getstr()
+		strDate = "'" + date + "'"
+		screen.addstr("\nThe time using 24hour clock in the format HH:MM:SS.\n")
+		time = screen.getstr()
+		strTime = "'" + time + "'"
+		try:
+			sql_ids = "SELECT a_id, s_id  FROM advisor, student where a_name = " + name2 + "AND s_name = " + strStudent_name + "\n"
+			cursor.execute(sql_ids)
+			ids_result = cursor.fetchall()
+			for row in ids_result:
+				aid = row[0]
+				sid = row[1]
+				str_aid = str(aid)
+				str_sid = str(sid)
+				sql_create = "INSERT INTO advising_schedule (`ad_id`, `stud_id`, `date`, `time`) VALUES (" + str_aid + ", " + str_sid + ", " + strDate + ", " + strTime + ");"
+				cursor.execute(sql_create)
+			screen.addstr("Appointment has been created\n")
+		except:
+			screen.addstr("Something went wrong.\n")
 	elif event == ord("3"): #delete appointment
 		screen.addstr("\nTo delete an appointment please provide:\nThe Student's first and last name.\nThe date of the appointment\n")
 	
