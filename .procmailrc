@@ -1,0 +1,26 @@
+# A default .procmailrc file
+# See http://engr.oregonstate.edu/computing/email/90
+
+# Include the standard spam filter
+# INCLUDERC=/usr/local/etc/procmail/standard.rc
+
+# remove comments to enable vacation
+# :0c
+# |/usr/bin/vacation -a andrew.phommathep phommata
+
+# http://www.instructables.com/id/How-to-fight-spam-using-spamassassin-dnsbl-and-/step4/Set-up-procmail-logging/
+MAILDIR=$HOME/mail
+LOGFILE=$HOME/mail/procmail.log
+
+# Uncomment below for troubleshooting
+VERBOSE=YES
+# LOGABSTRACT=YES
+
+####################################################
+# (Optionally) Add your own rules after this line
+####################################################
+:0
+* ^Subject:.*Advising Signup*
+ | /usr/bin/python /nfs/stak/students/p/phommata/labs/cs419/procmail.py
+# | /usr/bin/python /nfs/stak/students/p/phommata/labs/cs419/benHobbs-cs419-master/process_mail2.py
+# /nfs/stak/students/p/phommata/mail
