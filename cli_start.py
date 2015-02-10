@@ -16,8 +16,7 @@ while True:
 		screen.addstr("\nPlease give your name.\n") #Need their name to look up their appointments
 		name = screen.getstr() #get the string they typed
 		name2 = "'" + name + "'" #force name into a string so it works with the SQL query
-		
-		sql_read = "SELECT * FROM (SELECT data, time, a_name, s_name FROM advising_schedule, advisor, student WHERE advising_schedule.ad_id = advisor.a_id AND advising_schedule.stud_id = student.s_id) AS alias WHERE alias.a_name = " + name2 + "\n"
+		sql_read = "SELECT * FROM (SELECT date, time, a_name, s_name FROM advising_schedule, advisor, student WHERE advising_schedule.ad_id = advisor.a_id AND advising_schedule.stud_id = student.s_id) AS alias WHERE alias.a_name = " + name2 + "\n"
 		screen.addstr("SQL query is: " + sql_read) #Debugging purposes checking that SQL query appeared the way it should
 		try:
 			screen.addstr("Schedule for " + name + "\n")
