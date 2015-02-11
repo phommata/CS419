@@ -20,37 +20,35 @@ while True:
 	
 	if event == ord("3"): break # 4 = They want to exit CLI client
 	elif event == ord("1"): # 1 They want to read their advising schedule
-		sql_read = "SELECT * FROM (SELECT date, time, a_name, s_name FROM advising_schedule, advisor, student WHERE advising_schedule.ad_id = advisor.a_id AND advising_schedule.stud_id = student.s_id) AS alias WHERE alias.a_name = " + name2 + "\n"
-		#screen.addstr("SQL query is: " + sql_read) #Debugging purposes checking that SQL query appeared the way it should
+		sql_read = "SELECT datetime, ad_name, st_name FROM advising_schedule WHERE advising_schedule.ad_name = " + name2 + "\n"
+		screen.addstr("SQL query is: " + sql_read) #Debugging purposes checking that SQL query appeared the way it should
 		try:
 			screen.addstr("\nSchedule for " + name + "\n")
 			cursor.execute(sql_read)
 			results = cursor.fetchall()
 			for row in results:
-				appdate = row[0]
-				apptime = row[1]
-				aname = row[2]
-				sname = row[3]
-				newdate = str(appdate) #must change from object to string
-				newtime = str(apptime) #same as above
-				screen.addstr("Appointment with student: " + sname + " On: " + newdate + " At: " + newtime +"\n")
+				appdate_time = row[0]
+				aname = row[1]
+				sname = row[2]
+				newdate_time = str(appdate_time) #must change from object to string
+				screen.addstr("Appointment with student: " + sname + " On: " + newdate_time + "\n")
 		except:
 			screen.addstr("No Advisor named: " + name + "\n")	
 	elif event == ord("2"): #Cancel appointment
 		screen.addstr("\nTo cancel an appointment please provide:\nThe Student's first and last name.\n")
-		st_name = screen.getstr()
-		str_st_name = "'" + st_name + "'"
-		screen.addstr("\nThe date of the appointment in the format YYYY-MM-DD\n")
+		s_name = screen.getstr()
+		str_s_name = "'" + s_name + "'"
+		screen.addstr("\nThe date and time of the appointment in the format YYYY-MM-DD HH:MM:SS\n")
 		can_date = screen.getstr() 
 		str_can_date = str(can_date)
-		sql_emails = "SELECT a_email, s_email FROM advisor, student WHERE advisor.a_name = " + name2 + " AND student.s_name = " + str_st_name + "\n"
+		sql_emails = "SELECT ad_email, st_email FROM advising_schedule WHERE ad_name = " + name2 + " AND st_name = " + str_s_name + "\n"
 		try:
 			cursor.execute(sql_emails)
 			emails = cursor.fetchall()
 			for row in emails:
-				ad_email = row[0]
+				adv_email = row[0]
 				stud_email = row[1]
-			screen.addstr("Sending Cancellation Email to " + ad_email + " and " + stud_email + " for " + str_can_date + "\nAre you sure you want to continue? Y/N\n")
+			screen.addstr("Sending Cancellation Email to " + adv_email + " and " + stud_email + " for " + str_can_date + "\nAre you sure you want to continue? Y/N\n")
 			confirm = screen.getch()
 			if confirm == ord("y") or confirm == ord("Y"):
 				screen.addstr("\nAppointment is Cancelled\n")
