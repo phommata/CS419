@@ -3,7 +3,7 @@
 import sys
 import email
 import re
-import os
+import datetime
 
 def main():
     # http://stackoverflow.com/questions/14676375/pipe-email-from-procmail-to-python-script-that-parses-body-and-saves-as-text-fil
@@ -70,13 +70,21 @@ def main():
     print "-------------------------------------------------------------------------------\n"
     print body
     print "-------------------------------------------------------------------------------\n"
-    dateStr = find_between( body, "Date: ", "Time: " )
-    # dateStr = dateStr.strip()
+    dateStr = find_between( body, "day, ", "Time: " )
     print dateStr
-
-    timeStr = find_between( body, "Time: ", "Please" )
-    # timeStr = timeStr.strip()
+    dateStr = re.sub(r"(,|st|nd|rd|th)", "", dateStr)
+    print dateStr
+    # dateStrP = datetime.datetime.strptime(dateStr, "%B %d %Y")
+    # print dateStrP.strftime("%Y-%m-%d")
+    #
+    timeStr = find_between( body, "Time: ", " - " )
     print timeStr
+    # timeStrP = datetime.datetime.strptime(timeStr, "%I:%M%p")
+    # print timeStrP.strftime("%H-%M-%S")
+
+    datetimeStr = dateStr + " " + timeStr
+    datetimeStrP = datetime.datetime.strptime(datetimeStr, "%B %d %Y %I:%M%p")
+    print datetimeStrP
 
     outfile.close()
 
