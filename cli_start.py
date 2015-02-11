@@ -1,5 +1,6 @@
 import MySQLdb
 import curses
+import smtplib
 screen = curses.initscr()
 #curses.noecho() #Stops key presses from the user from showing on screen
 #curses.curs_set(0) #removes cursor from screen
@@ -52,6 +53,26 @@ while True:
 			confirm = screen.getch()
 			if confirm == ord("y") or confirm == ord("Y"):
 				screen.addstr("\nAppointment is Cancelled\n")
+				sender = 'do.not.reply@engr.orst.edu'
+				receivers = [stud_email]
+				message = """From: From EECS Advising <do.not.reply.@engr.orst.edu>
+To: To """ + s_name + """ <""" + stud_email + """>
+Subject: Advising Signup Cancellation
+
+Advising Signup with """ + name + """ CANCELLED
+Name: """ + s_name + """
+Email: """ + stud_email + """
+Date: """ + str_can_date + """
+Please contact support@engr.oregonstate.edu if you experience problems
+"""
+
+try:
+	smtpObj = smtplib.SMTP('mail.engr.oregonstate.edu', 25)
+	smtpObj.sendmail(sender, receivers, message)
+	screen.addstr("An email has been sent to you and the student")
+except:
+	screen.addstr("Error: Unable to send email.")
+
 				#Use provided and gathered info to send emails telling student and adviser that appointment is cancelled and procmail takes care of removing it from Outlook and database.
 			elif confirm == ord("n") or confirm == ("N"):
 				screen.addstr("\nAppointment has not been Cancelled\n")
