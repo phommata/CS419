@@ -74,13 +74,17 @@ def main():
     print dateStr
     dateStr = re.sub(r"(,|st|nd|rd|th)", "", dateStr)
     print dateStr
-    dateStrP = datetime.datetime.strptime(dateStr, "%B %d %Y")
-    print dateStrP.strftime("%Y-%m-%d")
-
+    # dateStrP = datetime.datetime.strptime(dateStr, "%B %d %Y")
+    # print dateStrP.strftime("%Y-%m-%d")
+    #
     timeStr = find_between( body, "Time: ", " - " )
     print timeStr
-    timeStrP = datetime.datetime.strptime(timeStr, "%I:%M%p")
-    print timeStrP.strftime("%H-%M-%S")
+    # timeStrP = datetime.datetime.strptime(timeStr, "%I:%M%p")
+    # print timeStrP.strftime("%H-%M-%S")
+
+    datetimeStr = dateStr + " " + timeStr
+    datetimeStrP = datetime.datetime.strptime(datetimeStr, "%B %d %Y %I:%M%p")
+    print datetimeStrP
 
     outfile.close()
 
