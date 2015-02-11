@@ -63,15 +63,16 @@ Advising Signup with """ + name + """ CANCELLED
 Name: """ + s_name + """
 Email: """ + stud_email + """
 Date: """ + str_can_date + """
-Please contact support@engr.oregonstate.edu if you experience problems
+
+Please contact support@engr.oregonstate.edu if you experience problems.
 """
 
-try:
-	smtpObj = smtplib.SMTP('mail.engr.oregonstate.edu', 25)
-	smtpObj.sendmail(sender, receivers, message)
-	screen.addstr("An email has been sent to you and the student")
-except:
-	screen.addstr("Error: Unable to send email.")
+				try:
+					smtpObj = smtplib.SMTP('mail.engr.oregonstate.edu', 25)
+					smtpObj.sendmail(sender, receivers, message)
+					screen.addstr("An email has been sent to you and the student")
+				except:
+					screen.addstr("Error: Unable to send email.")
 
 				#Use provided and gathered info to send emails telling student and adviser that appointment is cancelled and procmail takes care of removing it from Outlook and database.
 			elif confirm == ord("n") or confirm == ("N"):
