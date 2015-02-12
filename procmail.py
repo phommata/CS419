@@ -24,6 +24,8 @@ def main():
     print "-------------------------------------------------------------------------------\n"
 
     print toAddr
+    toAddr = re.split(r'; ', toAddr)
+    print toAddr
     print fromAddr
     print subject
 
@@ -87,7 +89,7 @@ def main():
     datetimeStrP = datetime.datetime.strptime(datetimeStr, "%B %d %Y %I:%M%p")
     print datetimeStrP
 
-    # def meeting_invitation(from, to, subject, body)
+    # def meeting_invitation(fromAddr, toAddr, subject, body)
 
     outfile.close()
 
