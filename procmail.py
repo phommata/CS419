@@ -43,14 +43,23 @@ def main():
         # print "len(advisorClean): ", len(advisorClean)
         # for x in advisorClean: print x
         if len(advisorClean) == 3:
-            print advisorClean[2], advisorClean[0]
+            advisorCleanName = advisorClean[2] + " " + advisorClean[0]
+            print advisorCleanName
+        elif len(advisorClean) == 2:
+            advisorCleanName = advisorClean[1] + " " + advisorClean[0]
+            print advisorCleanName
 
         forIndex = subject.find('for ')
         student = subject[(forIndex + len('for ')): len(subject)]
         # print student
         studentClean = re.split(r', | ', student)
         if len(studentClean) == 3:
-            print studentClean[2], studentClean[0]
+            studentCleanName = studentClean[2] + " " + studentClean[0]
+            print studentCleanName
+        elif len(studentClean) == 2:
+            studentCleanName = studentClean[1] + " " + studentClean[0]
+            print studentCleanName
+
     elif cancellation:
         print cancellation
     else:
@@ -64,7 +73,6 @@ def main():
         print "is multipart"
 
         for payload in msg.get_payload():
-            # if payload.is_multipart(): ...
             body += payload.get_payload()
     else:
         print msg.get_payload()
@@ -77,19 +85,18 @@ def main():
     print dateStr
     dateStr = re.sub(r"(,|st|nd|rd|th)", "", dateStr)
     print dateStr
-    # dateStrP = datetime.datetime.strptime(dateStr, "%B %d %Y")
-    # print dateStrP.strftime("%Y-%m-%d")
-    #
+
     timeStr = find_between( body, "Time: ", " - " )
     print timeStr
-    # timeStrP = datetime.datetime.strptime(timeStr, "%I:%M%p")
-    # print timeStrP.strftime("%H-%M-%S")
 
     datetimeStr = dateStr + " " + timeStr
     datetimeStrP = datetime.datetime.strptime(datetimeStr, "%B %d %Y %I:%M%p")
     print datetimeStrP
 
-    # def meeting_invitation(fromAddr, toAddr, subject, body)
+    uid = advisorCleanName + " " + str(datetimeStrP)
+    print uid
+
+    # def meeting_invitation(method, uid, fromAddr, toAddr, subject, body)
 
     outfile.close()
 

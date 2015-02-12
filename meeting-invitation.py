@@ -7,7 +7,7 @@ from email.Utils import COMMASPACE, formatdate
 from email import Encoders
 import os,datetime
 
-def meeting_invitation(fromAddr, toAddr, subject, body):
+def meeting_invitation(method, uid, fromAddr, toAddr, subject, body):
     CRLF = "\r\n"
     # login = ""
     # password = ""
@@ -41,13 +41,15 @@ def meeting_invitation(fromAddr, toAddr, subject, body):
            "PRODID:pyICSParser"+CRLF+\
            "VERSION:2.0"+CRLF+\
            "CALSCALE:GREGORIAN"+CRLF
-    ical+="METHOD:REQUEST"+CRLF+\
+    # ical+="METHOD:REQUEST"+CRLF+\
+    ical+= "METHOD:"+ method + CRLF+\
           "BEGIN:VEVENT"+CRLF+\
           "DTSTART:"+dtstart+CRLF+\
           "DTEND:"+dtend+CRLF+\
           "DTSTAMP:"+dtstamp+CRLF+organizer+CRLF
     # ical+= "UID:FIXMEUID"+dtstamp+CRLF
-    ical+= "UID:Kevin D McGrath"+CRLF
+    # ical+= "UID:Kevin D McGrath"+CRLF
+    ical+= "UID:"+ uid + CRLF
     ical+= attendee+\
            "CREATED:"+dtstamp+CRLF+\
            description+\
