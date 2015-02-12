@@ -7,11 +7,11 @@ from email.Utils import COMMASPACE, formatdate
 from email import Encoders
 import os,datetime
 
-# def meeting_invitation(adviserName, studentName, from, attendees, subject, datetimeStr):
+# def meeting_invitation(adviserName, studentName, from, to, subject, datetimeStr):
 CRLF = "\r\n"
 # login = ""
 # password = ""
-# attendees = ["phommata@engr.orst.edu"]
+# attendees = ["phommata@engr.orst.edu"] # @engr.orst.edu does not work
 attendees = ["phommata@onid.oregonstate.edu"]
 organizer = "ORGANIZER;CN=organiser:mailto:do.not.reply"+CRLF+" @engr.orst.edu"
 fro = "<do.not.reply@engr.orst.edu>"
@@ -20,7 +20,7 @@ ddtstart = datetime.datetime.now()
 dtoff = datetime.timedelta(days = 1)
 dur = datetime.timedelta(hours = 1)
 dur = datetime.timedelta(minutes = 1)
-ddtstart = ddtstart +dtoff
+ddtstart = ddtstart + dtoff
 dtend = ddtstart + dur
 dtstamp = datetime.datetime.now().strftime("%Y%m%dT%H%M%SZ")
 dtstart = ddtstart.strftime("%Y%m%dT%H%M%SZ")
@@ -92,7 +92,7 @@ msgAlternative.attach(part_email)
 msgAlternative.attach(part_cal)
 
 # mailServer = smtplib.SMTP('smtp.gmail.com', 587)
-mailServer = smtplib.SMTP('mail.engr.oregonstate.edu', 25)
+mailServer = smtplib.SMTP('mail.engr.oregonstate.edu', 587)
 # mailServer.ehlo()
 # mailServer.starttls()
 # mailServer.ehlo()

@@ -4,6 +4,7 @@ import sys
 import email
 import re
 import datetime
+# import meeting-invitation
 
 def main():
     # http://stackoverflow.com/questions/14676375/pipe-email-from-procmail-to-python-script-that-parses-body-and-saves-as-text-fil
@@ -85,6 +86,8 @@ def main():
     datetimeStr = dateStr + " " + timeStr
     datetimeStrP = datetime.datetime.strptime(datetimeStr, "%B %d %Y %I:%M%p")
     print datetimeStrP
+
+    # def meeting_invitation(from, to, subject, body)
 
     outfile.close()
 

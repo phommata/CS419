@@ -1,3 +1,4 @@
+# http://stackoverflow.com/questions/4823574/sending-meeting-invitations-with-python
 import smtplib
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEBase import MIMEBase
@@ -6,6 +7,7 @@ from email.Utils import COMMASPACE, formatdate
 from email import Encoders
 import os,datetime
 
+# def meeting_invitation(from, to, subject, body):
 CRLF = "\r\n"
 # login = ""
 # password = ""
@@ -17,7 +19,8 @@ fro = "<do.not.reply@engr.orst.edu>"
 ddtstart = datetime.datetime.now()
 dtoff = datetime.timedelta(days = 1)
 dur = datetime.timedelta(hours = 1)
-ddtstart = ddtstart +dtoff
+dur = datetime.timedelta(minutes = 1)
+ddtstart = ddtstart + dtoff
 dtend = ddtstart + dur
 dtstamp = datetime.datetime.now().strftime("%Y%m%dT%H%M%SZ")
 dtstart = ddtstart.strftime("%Y%m%dT%H%M%SZ")
@@ -37,7 +40,7 @@ ical = "BEGIN:VCALENDAR"+CRLF+\
        "PRODID:pyICSParser"+CRLF+\
        "VERSION:2.0"+CRLF+\
        "CALSCALE:GREGORIAN"+CRLF
-ical+="METHOD:CANCEL"+CRLF+\
+ical+="METHOD:REQUEST"+CRLF+\
       "BEGIN:VEVENT"+CRLF+\
       "DTSTART:"+dtstart+CRLF+\
       "DTEND:"+dtend+CRLF+\
@@ -50,7 +53,7 @@ ical+= attendee+\
        "LAST-MODIFIED:"+dtstamp+CRLF+\
        "LOCATION:"+CRLF+\
        "SEQUENCE:0"+CRLF+\
-       "STATUS:CANCELLED"+CRLF
+       "STATUS:CONFIRMED"+CRLF
 ical+= "SUMMARY:test "+ddtstart.strftime("%Y%m%d @ %H:%M")+CRLF+\
        "TRANSP:OPAQUE"+CRLF+\
        "END:VEVENT"+CRLF+\
@@ -71,7 +74,7 @@ msg['From'] = fro
 msg['To'] = ",".join(attendees)
 
 part_email = MIMEText(eml_body,"html")
-part_cal = MIMEText(ical,'calendar;method=CANCEL')
+part_cal = MIMEText(ical,'calendar;method=REQUEST')
 
 msgAlternative = MIMEMultipart('alternative')
 msg.attach(msgAlternative)
