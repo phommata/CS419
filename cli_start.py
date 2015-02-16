@@ -15,12 +15,33 @@ screen.addstr("To begin please provide your first and last name.\n") #Need their
 name = screen.getstr() #get the string they typed
 name2 = "'" + name + "'" #force name into a string so it works with the SQL queries
 
+#Function to print menu and get user selection
+#No parameters, returns char user selcted.
 def printMenu():
-	#function to print menu and return user selection
 	screen.addstr("\nPlease Select from the following menu:\n")
 	screen.addstr("1)View Appointments\n2)Cancel Appointment\n3)Exit\n")
 	selection = screen.getch()
-	return selection
+	return selection;
+
+#function to handle the reading of the database
+#2 parameters, advisor's name as a string with literal quotes 
+#and advisor's name as normal string. Returns nothing.
+def readDatabase(str_advisor, advisor):
+	sql_read = "SELECT datetime, ad_name, st_name FROM advising_schedule WHERE advising_schedule.ad_name = " + str_advisor + "\n"
+	screen.addstr("SQL query is: " + sql_read) #Debugging checking that SQL query appeared the way it should
+	try:
+		screen.addstr("\nSchedule for " + advisor + "\n")
+		cursor.execute(sql_read)
+		results = cursor.fetchall()
+		for row in results:
+			appdate_time = row[0]
+			aname = row[1]
+			sname = row[2]
+			newdate_time = str(appdate_time) #must change from object to string
+			screen.addstr("Appointment with student: " + sname + " On: " + newdate_time + "\n")
+	except:
+		screen.addstr("No Advisor named: " + name + "\n")
+	return;
 
 
 while True:
@@ -28,21 +49,8 @@ while True:
 	event = printMenu()
 	
 	if event == ord("3"): break #3 = They want to exit CLI client
-	elif event == ord("1"): # 1 They want to read their advising schedule
-		sql_read = "SELECT datetime, ad_name, st_name FROM advising_schedule WHERE advising_schedule.ad_name = " + name2 + "\n"
-		screen.addstr("SQL query is: " + sql_read) #Debugging purposes checking that SQL query appeared the way it should
-		try:
-			screen.addstr("\nSchedule for " + name + "\n")
-			cursor.execute(sql_read)
-			results = cursor.fetchall()
-			for row in results:
-				appdate_time = row[0]
-				aname = row[1]
-				sname = row[2]
-				newdate_time = str(appdate_time) #must change from object to string
-				screen.addstr("Appointment with student: " + sname + " On: " + newdate_time + "\n")
-		except:
-			screen.addstr("No Advisor named: " + name + "\n")	
+	elif event == ord("1"): #1 They want to read their advising schedule
+		readDatabase(name2, name)		
 	elif event == ord("2"): #Cancel appointment
 		screen.addstr("\nTo cancel an appointment please provide:\nThe Student's first and last name.\n")
 		s_name = screen.getstr()
