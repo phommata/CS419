@@ -30,46 +30,41 @@ def main():
     print subject
 
     # http://stackoverflow.com/questions/3368969/find-string-between-two-substrings
-    confirmed = subject.find('confirmed')
-    cancellation = subject.find('Cancellation')
-
-    if confirmed:
-        # print confirmed
-        advisor = find_between( subject, "with ", " confirmed" )
-        print "\'" + advisor + "\'"
-        advisorClean = re.split(r', | ', advisor)
-        # print advisorClean # ['McGrath', 'D', 'Kevin']
-        # print "len(advisorClean): ", len(advisorClean)
-        # for x in advisorClean: print x
-        if len(advisorClean) == 3:
-            advisorCleanName = advisorClean[2] + " " + advisorClean[0]
-            print advisorCleanName
-        elif len(advisorClean) == 2:
-            advisorCleanName = advisorClean[1] + " " + advisorClean[0]
-            print advisorCleanName
-
-        advisorTest = find_between(body, "Advising Signup with ", " confirmed")
-        print "advisorTest" + advisorTest
-
-        forIndex = subject.find('for ')
-        student = subject[(forIndex + len('for ')): len(subject)]
-        # print student
-        studentClean = re.split(r', | ', student)
-        if len(studentClean) == 3:
-            studentCleanName = studentClean[2] + " " + studentClean[0]
-            print studentCleanName
-        elif len(studentClean) == 2:
-            studentCleanName = studentClean[1] + " " + studentClean[0]
-            print studentCleanName
-        method = "REQUEST"
-
-    elif cancellation:
-        print cancellation
-        method = "CANCEL"
-        advisorTest = find_between(body, "Advising Signup with ", " CANCELLED")
-        print "advisorTest" + advisorTest
-    else:
-        print "No confirmed/Cancellation?!"
+    # confirmed = subject.find('confirmed')
+    # cancellation = subject.find('Cancellation')
+    #
+    # if confirmed:
+    #     # print confirmed
+    #     advisor = find_between( subject, "with ", " confirmed" )
+    #     print "\'" + advisor + "\'"
+    #     advisorClean = re.split(r', | ', advisor)
+    #     # print advisorClean # ['McGrath', 'D', 'Kevin']
+    #     # print "len(advisorClean): ", len(advisorClean)
+    #     # for x in advisorClean: print x
+    #     if len(advisorClean) == 3:
+    #         advisorCleanName = advisorClean[2] + " " + advisorClean[0]
+    #         print advisorCleanName
+    #     elif len(advisorClean) == 2:
+    #         advisorCleanName = advisorClean[1] + " " + advisorClean[0]
+    #         print advisorCleanName
+    #
+    #     forIndex = subject.find('for ')
+    #     student = subject[(forIndex + len('for ')): len(subject)]
+    #     # print student
+    #     studentClean = re.split(r', | ', student)
+    #     if len(studentClean) == 3:
+    #         studentCleanName = studentClean[2] + " " + studentClean[0]
+    #         print studentCleanName
+    #     elif len(studentClean) == 2:
+    #         studentCleanName = studentClean[1] + " " + studentClean[0]
+    #         print studentCleanName
+    #     method = "REQUEST"
+    #
+    # elif cancellation:
+    #     print cancellation
+    #     method = "CANCEL"
+    # else:
+    #     print "No confirmed/Cancellation?!"
 
     # http://stackoverflow.com/questions/17874360/python-how-to-parse-the-body-from-a-raw-email-given-that-raw-email-does-not
     b = msg
@@ -92,6 +87,29 @@ def main():
     bodyPlain = body[bodyPlainStart:bodyPlainEnd + 8]
     print bodyPlain
     print "-------------------------------------------------------------------------------\n"
+
+    confirmed = body.find('confirmed')
+    cancellation = body.find('CANCELLED')
+
+    if confirmed > 0:
+        advisor = find_between( body, "Advising Signup with ", " confirmed" )
+        print "advisor confirmed " + advisor
+        advisorClean = re.split(r', | ', advisor)
+        # print advisorClean # ['McGrath', 'D', 'Kevin']
+        # print "len(advisorClean): ", len(advisorClean)
+        # for x in advisorClean: print x
+        # if len(advisorClean) == 3:
+        advisorCleanName = advisorClean[len(advisorClean) - 1] + " " + advisorClean[0]
+        print advisorCleanName
+        # elif len(advisorClean) == 2:
+        #     advisorCleanName = advisorClean[1] + " " + advisorClean[0]
+        #     print advisorCleanName
+    elif cancellation > 0:
+        advisor = find_between( body, "Advising Signup with ", " CANCELLED" )
+        print "advisorTest CANCELLED " + advisor
+        advisorClean = re.split(r', | ', advisor)
+        advisorCleanName = advisorClean[len(advisorClean) - 1] + " " + advisorClean[0]
+        print advisorCleanName
 
     dateStr = find_between( body, "day, ", "Time: " )
     print dateStr
