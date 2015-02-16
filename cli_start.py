@@ -14,12 +14,20 @@ screen.addstr("To begin please provide your first and last name.\n") #Need their
 
 name = screen.getstr() #get the string they typed
 name2 = "'" + name + "'" #force name into a string so it works with the SQL queries
+
+def printMenu():
+	#function to print menu and return user selection
+	screen.addstr("\nPlease Select from the following menu:\n")
+	screen.addstr("1)View Appointments\n2)Cancel Appointment\n3)Exit\n")
+	selection = screen.getch()
+	return selection
+
+
 while True:
 	screen.refresh()
-	screen.addstr("\nPlease Select from the following menu:\n1)View Appointments\n2)Cancel Appointment\n3)Exit\n")
-	event = screen.getch()
+	event = printMenu()
 	
-	if event == ord("3"): break # 4 = They want to exit CLI client
+	if event == ord("3"): break #3 = They want to exit CLI client
 	elif event == ord("1"): # 1 They want to read their advising schedule
 		sql_read = "SELECT datetime, ad_name, st_name FROM advising_schedule WHERE advising_schedule.ad_name = " + name2 + "\n"
 		screen.addstr("SQL query is: " + sql_read) #Debugging purposes checking that SQL query appeared the way it should
@@ -53,8 +61,14 @@ while True:
 			confirm = screen.getch()
 			if confirm == ord("y") or confirm == ord("Y"):
 				screen.addstr("\nAppointment is Cancelled\n")
+				screen.addstr("sql state is this: " + sql_del + "\n")
+				sql_del = "DELETE FROM advising_schedule WHERE ad_name = " + name2 + " AND st_name = " + str_s_name + " AND datetime = " + str_can_date + "\n"
+				try:
+					cursor.execute(sql_del)
+				except:
+					screen.addstr("Appointment you are trying to cancel is not in our system. Please try again.")
 				sender = 'do.not.reply@engr.orst.edu'
-				receivers = [stud_email]
+				receivers = [stud_email, adv_email]
 				message = """From: From EECS Advising <do.not.reply.@engr.orst.edu>
 To: To """ + s_name + """ <""" + stud_email + """>
 Subject: Advising Signup Cancellation
