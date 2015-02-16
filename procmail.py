@@ -48,6 +48,9 @@ def main():
             advisorCleanName = advisorClean[1] + " " + advisorClean[0]
             print advisorCleanName
 
+        advisorTest = find_between(body, "Advising Signup with ", " confirmed")
+        print "advisorTest" + advisorTest
+
         forIndex = subject.find('for ')
         student = subject[(forIndex + len('for ')): len(subject)]
         # print student
@@ -63,6 +66,8 @@ def main():
     elif cancellation:
         print cancellation
         method = "CANCEL"
+        advisorTest = find_between(body, "Advising Signup with ", " CANCELLED")
+        print "advisorTest" + advisorTest
     else:
         print "No confirmed/Cancellation?!"
 
@@ -100,10 +105,10 @@ def main():
     datetimeStrP = datetime.datetime.strptime(datetimeStr, "%B %d %Y %I:%M%p")
     print datetimeStrP
 
-    uid = advisorCleanName + " " + str(datetimeStrP)
-    print uid
+    # uid = advisorCleanName + " " + str(datetimeStrP)
+    # print uid
 
-    meeting_invitation.meeting_invitation(fromAddr, toAddr, bodyPlain, datetimeStrP, method, uid)
+    # meeting_invitation.meeting_invitation(fromAddr, toAddr, bodyPlain, datetimeStrP, method, uid)
 
     outfile.close()
 
