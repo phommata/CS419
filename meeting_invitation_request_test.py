@@ -11,7 +11,7 @@ import os,datetime
 CRLF = "\r\n"
 # login = ""
 # password = ""
-# attendees = ["phommata@engr.orst.edu"] # @engr.orst.edu does not work
+# attendees = ["phommata@engr.orst.edu"]
 attendees = ["phommata@onid.oregonstate.edu"]
 organizer = "ORGANIZER;CN=organiser:mailto:do.not.reply"+CRLF+" @engr.orst.edu"
 fro = "<do.not.reply@engr.orst.edu>"
@@ -69,11 +69,11 @@ eml_body_bin = "This is the email body in binary - two steps"
 msg = MIMEMultipart('mixed')
 msg['Reply-To']=fro
 msg['Date'] = formatdate(localtime=True)
-msg['Subject'] = "Advising Signup with McGrath, D Kevin confirmed for Brabham, Matthew Lawrence " #+ dtstart
+msg['Subject'] = "Advising Meeting CANCELLED" #+ dtstart
 msg['From'] = fro
 msg['To'] = ",".join(attendees)
 
-part_email = MIMEText(eml_body,"html")
+part_email = MIMEText(eml_body.encode("ISO-8859-1"),"plain", "ISO-8859-1")
 part_cal = MIMEText(ical,'calendar;method=REQUEST')
 
 msgAlternative = MIMEMultipart('alternative')

@@ -5,29 +5,32 @@ from email.MIMEBase import MIMEBase
 from email.MIMEText import MIMEText
 from email.Utils import COMMASPACE, formatdate
 from email import Encoders
-import os,datetime
+import os,datetime,time
 
-def meeting_invitation(method, uid, fromAddr, toAddr, subject, body):
+def meeting_invitation(fromAddr, toAddr, body, datetimeStrP, method, uid):
     CRLF = "\r\n"
     # login = ""
     # password = ""
-    # attendees = ["phommata@engr.orst.edu"] # @engr.orst.edu does not work
-    # attendees = ["phommata@onid.oregonstate.edu"]
+    # attendees = ['phommata <phommata@engr.orst.edu>', '\n        Andrew Phommathep <13destinies@gmail.com>']
     attendees = toAddr
     organizer = "ORGANIZER;CN=organiser:mailto:do.not.reply"+CRLF+" @engr.orst.edu"
     fro = "<do.not.reply@engr.orst.edu>"
 
-    ddtstart = datetime.datetime.now()
-    dtoff = datetime.timedelta(days = 1)
-    dur = datetime.timedelta(hours = 1)
-    dur = datetime.timedelta(minutes = 1)
+    ddtstart = datetimeStrP
+    dtoff = datetime.timedelta(hours = 8) # Correct -8 hour offset
+    dur = datetime.timedelta(minutes = 15)
     ddtstart = ddtstart + dtoff
     dtend = ddtstart + dur
     dtstamp = datetime.datetime.now().strftime("%Y%m%dT%H%M%SZ")
     dtstart = ddtstart.strftime("%Y%m%dT%H%M%SZ")
     dtend = dtend.strftime("%Y%m%dT%H%M%SZ")
 
-    description = "DESCRIPTION: test invitation from pyICSParser"+CRLF
+    if method == "REQUEST":
+        status = "REQUEST"
+    elif method == "CANCEL":
+        status = "CANCELLED"
+
+    description = "DESCRIPTION: " + body +CRLF
     attendee = ""
     for att in attendees:
         attendee += "ATTENDEE;CUTYPE=INDIVIDUAL;" \
@@ -56,28 +59,25 @@ def meeting_invitation(method, uid, fromAddr, toAddr, subject, body):
            "LAST-MODIFIED:"+dtstamp+CRLF+\
            "LOCATION:"+CRLF+\
            "SEQUENCE:0"+CRLF+\
-           "STATUS:CONFIRMED"+CRLF
-    ical+= "SUMMARY:test "+ddtstart.strftime("%Y%m%d @ %H:%M")+CRLF+\
+           "STATUS:"+status+CRLF
+    ical+= "SUMMARY: Advising Meeting " + method + CRLF+\
            "TRANSP:OPAQUE"+CRLF+\
            "END:VEVENT"+CRLF+\
            "END:VCALENDAR"+CRLF
 
-    eml_body = "Advising Signup with McGrath, D Kevin confirmed\r\n" \
-               "Name: REDACTED\r\n" \
-               "Email: REDACT@engr.orst.edu\r\n" \
-               "Date: Wednesday, November 21st, 2012\r\n" \
-               "Time: 1:00pm - 1:15pm\r\n\r\n" \
-               "Please contact support@engr.oregonstate.edu if you experience problems"
-    eml_body_bin = "This is the email body in binary - two steps"
+    eml_body = body
     msg = MIMEMultipart('mixed')
     msg['Reply-To']=fro
     msg['Date'] = formatdate(localtime=True)
-    msg['Subject'] = "Advising Signup with McGrath, D Kevin confirmed for Brabham, Matthew Lawrence " #+ dtstart
+    msg['Subject'] = "Advising Meeting " + method #+ dtstart
     msg['From'] = fro
     msg['To'] = ",".join(attendees)
 
-    part_email = MIMEText(eml_body,"html")
-    part_cal = MIMEText(ical,'calendar;method=REQUEST')
+    # http://stackoverflow.com/questions/10295530/how-to-set-a-charset-in-email-using-smtplib-in-python-2-7
+    # part_email = MIMEText(eml_body.encode("ISO-8859-1"),"plain", "ISO-8859-1")
+    # part_email = MIMEText(eml_body,"html")
+    part_email = MIMEText(eml_body,"plain")
+    part_cal = MIMEText(ical,'calendar;method=' + method)
 
     msgAlternative = MIMEMultipart('alternative')
     msg.attach(msgAlternative)

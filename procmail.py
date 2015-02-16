@@ -4,7 +4,7 @@ import sys
 import email
 import re
 import datetime
-# import meeting-invitation
+import meeting_invitation
 
 def main():
     # http://stackoverflow.com/questions/14676375/pipe-email-from-procmail-to-python-script-that-parses-body-and-saves-as-text-fil
@@ -24,13 +24,12 @@ def main():
     print "-------------------------------------------------------------------------------\n"
 
     print toAddr
-    toAddr = re.split(r'; ', toAddr)
+    toAddr = re.split(r',', toAddr)
     print toAddr
     print fromAddr
     print subject
 
     # http://stackoverflow.com/questions/3368969/find-string-between-two-substrings
-    # subject = "Advising Signup with McGrath, D Kevin confirmed for Brabham, Matthew Lawrence"
     confirmed = subject.find('confirmed')
     cancellation = subject.find('Cancellation')
 
@@ -59,9 +58,11 @@ def main():
         elif len(studentClean) == 2:
             studentCleanName = studentClean[1] + " " + studentClean[0]
             print studentCleanName
+        method = "REQUEST"
 
     elif cancellation:
         print cancellation
+        method = "CANCEL"
     else:
         print "No confirmed/Cancellation?!"
 
@@ -81,6 +82,12 @@ def main():
     print "-------------------------------------------------------------------------------\n"
     print body
     print "-------------------------------------------------------------------------------\n"
+    bodyPlainStart = body.find("Advising")
+    bodyPlainEnd = body.find("problems")
+    bodyPlain = body[bodyPlainStart:bodyPlainEnd + 8]
+    print bodyPlain
+    print "-------------------------------------------------------------------------------\n"
+
     dateStr = find_between( body, "day, ", "Time: " )
     print dateStr
     dateStr = re.sub(r"(,|st|nd|rd|th)", "", dateStr)
@@ -96,7 +103,7 @@ def main():
     uid = advisorCleanName + " " + str(datetimeStrP)
     print uid
 
-    # def meeting_invitation(method, uid, fromAddr, toAddr, subject, body)
+    meeting_invitation.meeting_invitation(fromAddr, toAddr, bodyPlain, datetimeStrP, method, uid)
 
     outfile.close()
 
@@ -110,27 +117,3 @@ def find_between( s, first, last ):
 
 if __name__ == '__main__':     # if the function is the main function ...
     main() # ...call it
-
-# http://stackoverflow.com/questions/11472442/grab-first-word-in-string-after-id
-# text = 'Advising Signup with McGrath, D Kevin confirmed for Brabham, Matthew Lawrence'
-# match = re.search(r'with (\w+\w+\w+)', text)
-# if match:
-#     print match.group(1) # McGrath
-#
-# words = text.split()
-# try:
-#     word = words[words.index("with") + 1]
-#     print word # McGrath,
-# except (ValueError, IndexError): word = ''
-
-
-#
-# def find_between_r( s, first, last ):
-#     try:
-#         start = s.rindex( first ) + len( first )
-#         end = s.rindex( last, start )
-#         return s[start:end]
-#     except ValueError:
-#         return ""
-#
-# print find_between_r( s, "with ", " confirmed" )
