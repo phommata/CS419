@@ -45,6 +45,30 @@ def readDatabase(str_advisor, advisor):
 	except:
 		screen.addstr("No Advisor named: " + name + "\n")
 	return num;
+
+#Think once the files Andrew are working on will be able to call those instead
+def emailTemp(stu_email, ad_email, student, adviser, date_time):
+	sender = 'do.not.reply@engr.orst.edu'
+	receivers = [stu_email, ad_email]
+	message = """From: From EECS Advising <do.not.reply.@engr.orst.edu>
+To: To """ + student + """ <""" + stu_email + """>
+Subject: Advising Signup Cancellation
+
+Advising Signup with """ + adviser + """ CANCELLED
+Name: """ + student + """
+Email: """ + stu_email + """
+Date: """ + date_time+ """
+
+Please contact support@engr.oregonstate.edu if you experience problems.
+"""
+
+	try:
+		smtpObj = smtplib.SMTP('mail.engr.oregonstate.edu', 25)
+		smtpObj.sendmail(sender, receivers, message)
+		screen.addstr("An email has been sent to you and the student")
+	except:
+		screen.addstr("Error: Unable to send email.")
+	return;
 	
 	
 def cancelApp(str_advisor, advisor):
@@ -66,6 +90,31 @@ def cancelApp(str_advisor, advisor):
 		newdate_time = str(appdate_time) #must change from object to string
 		if num == int(select):
 			screen.addstr("STOP HERE " + str(num) + "\n" )
+			str_s_name = "'" + sname + "'"
+			sql_emails = "SELECT ad_email, st_email FROM advising_schedule WHERE ad_name = " + str_advisor + " AND st_name = " + str_s_name + "\n"
+			try:
+				cursor.execute(sql_emails)
+				emails = cursor.fetchall()
+				for row in emails:
+					adv_email = row[0]
+					stud_email = row[1]
+				screen.addstr("Sending Cancellation Email to " + adv_email + " and " + stud_email + " for " + newdate_time+ "\nAre you sure you want to continue? Y/N\n")
+				confirm = screen.getch()
+				if confirm == ord("y") or confirm == ord("Y"):
+					screen.addstr("\nAppointment is Cancelled\n")
+					screen.addstr("sql state is this: " + sql_del + "\n")
+					sql_del = "DELETE FROM advising_schedule WHERE ad_name = " + str_advisor + " AND st_name = " + str_s_name + " AND datetime = " + newdate_time+ "\n"
+					try:
+						cursor.execute(sql_del)
+						emailTemp(stud_email, adv_email, s_name, advisor, newdate_time)
+					except:
+						screen.addstr("Appointment you are trying to cancel is not in our system. Please try again.")
+				elif confirm == ord("n") or confirm == ("N"):
+					screen.addstr("\nAppointment has not been Cancelled\n")
+				else:
+					screen.addstr("\nDidn't Understand your input. Appointment will not be Cancelled\n")
+			except:
+				screen.addstr("\nError Please Try Again\n")
 			break
 		else:
 			screen.addstr("Keep going " + str(num) + "\n")
@@ -83,57 +132,6 @@ while True:
 		break
 	elif event == ord("1"): #1 They want to read their advising schedule
 		value = readDatabase(name2, name) #Don't really need num of rows here
-		cancelApp(name2, name)
 	elif event == ord("2"): #Cancel appointment
-		screen.addstr("\nTo cancel an appointment please provide:\nThe Student's first and last name.\n")
-		s_name = screen.getstr()
-		str_s_name = "'" + s_name + "'"
-		screen.addstr("\nThe date and time of the appointment in the format YYYY-MM-DD HH:MM:SS\n")
-		can_date = screen.getstr() 
-		str_can_date = str(can_date)
-		sql_emails = "SELECT ad_email, st_email FROM advising_schedule WHERE ad_name = " + name2 + " AND st_name = " + str_s_name + "\n"
-		try:
-			cursor.execute(sql_emails)
-			emails = cursor.fetchall()
-			for row in emails:
-				adv_email = row[0]
-				stud_email = row[1]
-			screen.addstr("Sending Cancellation Email to " + adv_email + " and " + stud_email + " for " + str_can_date + "\nAre you sure you want to continue? Y/N\n")
-			confirm = screen.getch()
-			if confirm == ord("y") or confirm == ord("Y"):
-				screen.addstr("\nAppointment is Cancelled\n")
-				screen.addstr("sql state is this: " + sql_del + "\n")
-				sql_del = "DELETE FROM advising_schedule WHERE ad_name = " + name2 + " AND st_name = " + str_s_name + " AND datetime = " + str_can_date + "\n"
-				try:
-					cursor.execute(sql_del)
-				except:
-					screen.addstr("Appointment you are trying to cancel is not in our system. Please try again.")
-				sender = 'do.not.reply@engr.orst.edu'
-				receivers = [stud_email, adv_email]
-				message = """From: From EECS Advising <do.not.reply.@engr.orst.edu>
-To: To """ + s_name + """ <""" + stud_email + """>
-Subject: Advising Signup Cancellation
-
-Advising Signup with """ + name + """ CANCELLED
-Name: """ + s_name + """
-Email: """ + stud_email + """
-Date: """ + str_can_date + """
-
-Please contact support@engr.oregonstate.edu if you experience problems.
-"""
-
-				try:
-					smtpObj = smtplib.SMTP('mail.engr.oregonstate.edu', 25)
-					smtpObj.sendmail(sender, receivers, message)
-					screen.addstr("An email has been sent to you and the student")
-				except:
-					screen.addstr("Error: Unable to send email.")
-
-				#Use provided and gathered info to send emails telling student and adviser that appointment is cancelled and procmail takes care of removing it from Outlook and database.
-			elif confirm == ord("n") or confirm == ("N"):
-				screen.addstr("\nAppointment has not been Cancelled\n")
-			else:
-				screen.addstr("\nDidn't Understand your input. Appointment will not be Cancelled\n")
-		except:
-			screen.addstr("\nError Please Try Again\n")
+		val2 = cancelApp(name2, name)
 curses.endwin()
