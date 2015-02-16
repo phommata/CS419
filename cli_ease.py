@@ -25,28 +25,11 @@ def printMenu():
 
 #function to handle the reading of the database
 #2 parameters, advisor's name as a string with literal quotes 
-#and advisor's name as normal string. Returns nothing.
+#and advisor's name as normal string. 
+#Returns the number of rows / appointments
 def readDatabase(str_advisor, advisor):
 	sql_read = "SELECT datetime, ad_name, st_name FROM advising_schedule WHERE advising_schedule.ad_name = " + str_advisor + "\n"
-	screen.addstr("SQL query is: " + sql_read) #Debugging checking that SQL query appeared the way it should
-	try:
-		screen.addstr("\nSchedule for " + advisor + "\n")
-		cursor.execute(sql_read)
-		results = cursor.fetchall()
-		for row in results:
-			appdate_time = row[0]
-			aname = row[1]
-			sname = row[2]
-			newdate_time = str(appdate_time) #must change from object to string
-			screen.addstr("Appointment with student: " + sname + " On: " + newdate_time + "\n")
-	except:
-		screen.addstr("No Advisor named: " + name + "\n")
-	return;
-	
-	
-def cancelApp(str_advisor, advisor):
-	sql_read = "SELECT datetime, ad_name, st_name FROM advising_schedule WHERE advising_schedule.ad_name = " + str_advisor + "\n"
-	screen.addstr("SQL query is: " + sql_read) #Debugging checking that SQL query appeared the way it should
+	#screen.addstr("SQL query is: " + sql_read) #Debugging checking that SQL query appeared the way it should
 	try:
 		screen.addstr("\nSchedule for " + advisor + "\n")
 		cursor.execute(sql_read)
@@ -61,6 +44,31 @@ def cancelApp(str_advisor, advisor):
 			screen.addstr("Appointment with student: " + sname + " On: " + newdate_time + "\n")
 	except:
 		screen.addstr("No Advisor named: " + name + "\n")
+	return num;
+	
+	
+def cancelApp(str_advisor, advisor):
+	t_rows = readDatabase(str_advisor, advisor)
+	str_tRows = str(t_rows)
+	screen.addstr("Using 1 through " + str_tRows + " select the number that coincides with the appointment you want to cancel.\n")
+	select = screen.getstr()
+	print select
+	sql_read = "SELECT datetime, ad_name, st_name FROM advising_schedule WHERE advising_schedule.ad_name = " + str_advisor + "\n"
+	#screen.addstr("SQL query is: " + sql_read) #Debugging checking that SQL query appeared the way it should
+	cursor.execute(sql_read)
+	results = cursor.fetchall()
+	num = 0
+	for row in results:
+		num = num + 1
+		appdate_time = row[0]
+		aname = row[1]
+		sname = row[2]
+		newdate_time = str(appdate_time) #must change from object to string
+		if num == int(select):
+			screen.addstr("STOP HERE " + str(num) + "\n" )
+			break
+		else:
+			screen.addstr("Keep going " + str(num) + "\n")
 	
 	str_num = str(num)
 	screen.addstr("num of rows = " + str_num + "\n")
@@ -72,11 +80,10 @@ while True:
 	event = printMenu()
 	
 	if event == ord("3"):  #3 = They want to exit CLI client
-		screen.addstr("Exiting the Simplified Advising Scheduling System.\n")
-		screen.addstr("Have a great day advisor " + name + "!\n")
 		break
 	elif event == ord("1"): #1 They want to read their advising schedule
-		readDatabase(name2, name)		
+		value = readDatabase(name2, name) #Don't really need num of rows here
+		cancelApp(name2, name)
 	elif event == ord("2"): #Cancel appointment
 		screen.addstr("\nTo cancel an appointment please provide:\nThe Student's first and last name.\n")
 		s_name = screen.getstr()
