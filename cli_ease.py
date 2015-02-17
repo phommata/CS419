@@ -15,6 +15,16 @@ screen.addstr("To begin please provide your first and last name.\n") #Need their
 name = screen.getstr() #get the string they typed
 name2 = "'" + name + "'" #force name into a string so it works with the SQL queries
 
+
+def realName():
+	nameCheck = "SELECT ad_name FROM advising_schedule WHERE ad_name = " + name2 + "\n"
+	cursor.execute(nameCheck)
+	getback = cursor.fetchall()
+	if getback:
+		return 1;
+	else:
+		return 0;
+
 #Function to print menu and get user selection
 #No parameters, returns char user selcted.
 def printMenu():
@@ -29,23 +39,24 @@ def printMenu():
 #Returns the number of rows / appointments
 def readDatabase(str_advisor, advisor):
 	sql_read = "SELECT date_time, ad_name, st_name FROM advising_schedule WHERE advising_schedule.ad_name = " + str_advisor + "\n"
-	#screen.addstr("SQL query is: " + sql_read) #Debugging SQL query 
-	screen.addstr("\nSchedule for " + advisor + "\n")
-	cursor.execute(sql_read)
-	results = cursor.fetchall()
-	num = 0
-	for row in results:
-		num = num + 1
-		appdate_time = row[0]
-		aname = row[1]
-		sname = row[2]
-		newdate_time = str(appdate_time) #must change from object to string
-		screen.addstr("Appointment with student: " + sname + " On: " + newdate_time + "\n")
+	screen.addstr("SQL query is: " + sql_read) #Debugging SQL query 
+	try:	
+		cursor.execute(sql_read)
+		results = cursor.fetchall()
+		num = 0
+		for row in results:
+			num = num + 1
+			appdate_time = row[0]
+			aname = row[1]
+			sname = row[2]
+			newdate_time = str(appdate_time) #must change from object to string
+			screen.addstr("Appointment with student: " + sname + " On: " + newdate_time + "\n")
+	except:
+		screen.addstr("No Adviser by name of " + name + "\n")
 	return num;
 
 #Think once the files Andrew are working on will be able to call those instead
 def emailTemp(stu_email, ad_email, student, adviser, date_time):
-	screen.addstr("DO I get to email function???\n")
 	sender = 'do.not.reply@engr.orst.edu'
 	receivers = [stu_email, ad_email]
 	message = """From: From EECS Advising <do.not.reply.@engr.orst.edu>
@@ -72,50 +83,58 @@ Please contact support@engr.oregonstate.edu if you experience problems.
 def cancelApp(str_advisor, advisor):
 	t_rows = readDatabase(str_advisor, advisor)
 	str_tRows = str(t_rows)
-	screen.addstr("\nUsing 1 through " + str_tRows + " select the number that coincides with the appointment you want to cancel.\n")
+	screen.addstr("\nUsing 1-" + str_tRows + " select the number that coincides with the appointment you want to cancel.\n")
 	select = screen.getstr()
-	print select
-	sql_read = "SELECT date_time, ad_name, st_name FROM advising_schedule WHERE advising_schedule.ad_name = " + str_advisor + "\n"
-	#screen.addstr("SQL query is: " + sql_read) #Debugging checking that SQL query appeared the way it should
-	cursor.execute(sql_read)
-	results = cursor.fetchall()
-	num2 = 0
-	for row in results:
-		num2 = num2 + 1
-		appdate_time = row[0]
-		aname = row[1]
-		sname = row[2]
-		newdate_time = str(appdate_time) #must change from object to string
-		if num2 == int(select):
-			screen.addstr("STOP HERE " + str(num2) + "\n" )
-			str_s_name = "'" + sname + "'"
-			sql_emails = "SELECT ad_email, st_email FROM advising_schedule WHERE ad_name = " + str_advisor + " AND st_name = " + str_s_name + ";\n"
-			screen.addstr("sql emails looks like this: \n" + sql_emails + "\n")
-			cursor.execute(sql_emails)
-			emails = cursor.fetchall()
-			for row in emails:
-				adv_email = row[0]
-				stud_email = row[1]
-			screen.addstr("Sending Cancellation Email to " + adv_email + " and " + stud_email + " for " + newdate_time + "\n")
-			str_date = "'" + newdate_time + "'"
-			sql_del = "DELETE FROM advising_schedule WHERE ad_name = " + str_advisor + " AND st_name = " + str_s_name + " AND date_time = " + str_date + "\n"
-			screen.addstr("SQL DELETE = \n" + sql_del + "\n")
-			screen.addstr("Are you sure you want to continue? Y/N\n")
-			confirm = screen.getch()
-			if confirm == ord("y") or confirm == ord("Y"):
-				screen.addstr("\nAppointment is Cancelled\n")
-				cursor.execute(sql_del)
-				screen.addstr("Do I get here?\n")
-				emailTemp(stud_email, adv_email, sname, advisor, newdate_time)
-			elif confirm == ord("n") or confirm == ("N"):
-				screen.addstr("\nAppointment has not been Cancelled\n")
-			else:
-				screen.addstr("\nIncorrect input. Appointment will not be Cancelled\n")
+	try:
+		sel_int = int(select)
+	except:
+		screen.addstr("Invalid input\n")
+		return;
+	if int(select) > int(t_rows):
+		screen.addstr("The number you have selected is too high\n")
+	elif int(select) > 0 and int(select) <= int(t_rows): 
+		sql_read = "SELECT date_time, ad_name, st_name FROM advising_schedule WHERE advising_schedule.ad_name = " + str_advisor + "\n"
+		#screen.addstr("SQL query is: " + sql_read) #Debugging checking that SQL query appeared the way it should
+		cursor.execute(sql_read)
+		results = cursor.fetchall()
+		num2 = 0
+		for row in results:
+			num2 = num2 + 1
+			appdate_time = row[0]
+			aname = row[1]
+			sname = row[2]
+			newdate_time = str(appdate_time) #must change from object to string
+			if num2 == int(select):
+				str_s_name = "'" + sname + "'"
+				sql_emails = "SELECT ad_email, st_email FROM advising_schedule WHERE ad_name = " + str_advisor + " AND st_name = " + str_s_name + ";\n"
+				#screen.addstr("sql emails: \n" + sql_emails + "\n")
+				cursor.execute(sql_emails)
+				emails = cursor.fetchall()
+				for row in emails:
+					adv_email = row[0]
+					stud_email = row[1]
+				screen.addstr("Sending Cancellation Email to " + adv_email + " and " + stud_email + " for " + newdate_time + "\n")
+				str_date = "'" + newdate_time + "'"
+				sql_del = "DELETE FROM advising_schedule WHERE ad_name = " + str_advisor + " AND st_name = " + str_s_name + " AND date_time = " + str_date + "\n"
+				#screen.addstr("SQL DELETE = \n" + sql_del + "\n")
+				screen.addstr("Are you sure you want to continue? Y/N\n")
+				confirm = screen.getch()
+				if confirm == ord("y") or confirm == ord("Y"):
+					screen.addstr("\nAppointment is Cancelled\n")
+					cursor.execute(sql_del)
+					emailTemp(stud_email, adv_email, sname, advisor, newdate_time)
+				elif confirm == ord("n") or confirm == ("N"):
+					screen.addstr("\nAppointment has not been Cancelled\n")
+				else:
+					screen.addstr("\nIncorrect input. Appointment will not be Cancelled\n")
 			break
-	str_num = str(num2)
-	screen.addstr("num of rows = " + str_num + "\n")
+	
+	return;
 
-
+stat = realName()
+if stat == 0:
+	screen.addstr("Not a valid name.\n")
+	
 while True:
 	screen.refresh()
 	event = printMenu()
