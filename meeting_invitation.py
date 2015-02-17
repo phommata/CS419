@@ -5,7 +5,7 @@ from email.MIMEBase import MIMEBase
 from email.MIMEText import MIMEText
 from email.Utils import COMMASPACE, formatdate
 from email import Encoders
-import os,datetime,time
+import os, datetime, time
 
 def meeting_invitation(fromAddr, toAddr, body, datetimeStrP, method, uid):
     CRLF = "\r\n"
