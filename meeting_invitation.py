@@ -69,7 +69,7 @@ def meeting_invitation(fromAddr, toAddr, body, datetimeStrP, method, uid):
     msg = MIMEMultipart('mixed')
     msg['Reply-To']=fro
     msg['Date'] = formatdate(localtime=True)
-    msg['Subject'] = "Advising Meeting " + method #+ dtstart
+    msg['Subject'] = "Advising Meeting " + status #+ dtstart
     msg['From'] = fro
     msg['To'] = ",".join(attendees)
 

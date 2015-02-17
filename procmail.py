@@ -1,5 +1,3 @@
-#! /usr/bin/python
-
 import sys
 import email
 import re
@@ -29,43 +27,6 @@ def main():
     print fromAddr
     print subject
 
-    # http://stackoverflow.com/questions/3368969/find-string-between-two-substrings
-    # confirmed = subject.find('confirmed')
-    # cancellation = subject.find('Cancellation')
-    #
-    # if confirmed:
-    #     # print confirmed
-    #     advisor = find_between( subject, "with ", " confirmed" )
-    #     print "\'" + advisor + "\'"
-    #     advisorClean = re.split(r', | ', advisor)
-    #     # print advisorClean # ['McGrath', 'D', 'Kevin']
-    #     # print "len(advisorClean): ", len(advisorClean)
-    #     # for x in advisorClean: print x
-    #     if len(advisorClean) == 3:
-    #         advisorCleanName = advisorClean[2] + " " + advisorClean[0]
-    #         print advisorCleanName
-    #     elif len(advisorClean) == 2:
-    #         advisorCleanName = advisorClean[1] + " " + advisorClean[0]
-    #         print advisorCleanName
-    #
-    #     forIndex = subject.find('for ')
-    #     student = subject[(forIndex + len('for ')): len(subject)]
-    #     # print student
-    #     studentClean = re.split(r', | ', student)
-    #     if len(studentClean) == 3:
-    #         studentCleanName = studentClean[2] + " " + studentClean[0]
-    #         print studentCleanName
-    #     elif len(studentClean) == 2:
-    #         studentCleanName = studentClean[1] + " " + studentClean[0]
-    #         print studentCleanName
-    #     method = "REQUEST"
-    #
-    # elif cancellation:
-    #     print cancellation
-    #     method = "CANCEL"
-    # else:
-    #     print "No confirmed/Cancellation?!"
-
     # http://stackoverflow.com/questions/17874360/python-how-to-parse-the-body-from-a-raw-email-given-that-raw-email-does-not
     b = msg
     body = ""
@@ -92,24 +53,36 @@ def main():
     cancellation = body.find('CANCELLED')
 
     if confirmed > 0:
+        # http://stackoverflow.com/questions/3368969/find-string-between-two-substrings
         advisor = find_between( body, "Advising Signup with ", " confirmed" )
         print "advisor confirmed " + advisor
         advisorClean = re.split(r', | ', advisor)
-        # print advisorClean # ['McGrath', 'D', 'Kevin']
-        # print "len(advisorClean): ", len(advisorClean)
-        # for x in advisorClean: print x
-        # if len(advisorClean) == 3:
         advisorCleanName = advisorClean[len(advisorClean) - 1] + " " + advisorClean[0]
         print advisorCleanName
-        # elif len(advisorClean) == 2:
-        #     advisorCleanName = advisorClean[1] + " " + advisorClean[0]
-        #     print advisorCleanName
+
+        student = find_between( body, "Name: ", "Email:" )
+        print "student confirmed " + student
+        studentClean = re.split(r', | ', student)
+        studentCleanName = studentClean[len(studentClean) - 1] + " " + studentClean[0]
+        print studentCleanName
+
+        method = "REQUEST"
     elif cancellation > 0:
         advisor = find_between( body, "Advising Signup with ", " CANCELLED" )
-        print "advisorTest CANCELLED " + advisor
+        print "advisor CANCELLED " + advisor
         advisorClean = re.split(r', | ', advisor)
         advisorCleanName = advisorClean[len(advisorClean) - 1] + " " + advisorClean[0]
         print advisorCleanName
+
+        student = find_between( body, "Name: ", "Email:" )
+        print "student CANCELLED " + student
+        studentClean = re.split(r', | ', student)
+        studentCleanName = studentClean[len(studentClean) - 1] + " " + studentClean[0]
+        print studentCleanName
+
+        method = "CANCEL"
+    else:
+        print "No confirmed/CANCELLED in body?!"
 
     dateStr = find_between( body, "day, ", "Time: " )
     print dateStr
@@ -123,10 +96,10 @@ def main():
     datetimeStrP = datetime.datetime.strptime(datetimeStr, "%B %d %Y %I:%M%p")
     print datetimeStrP
 
-    # uid = advisorCleanName + " " + str(datetimeStrP)
-    # print uid
+    uid = advisorCleanName + " " + str(datetimeStrP)
+    print uid
 
-    # meeting_invitation.meeting_invitation(fromAddr, toAddr, bodyPlain, datetimeStrP, method, uid)
+    meeting_invitation.meeting_invitation(fromAddr, toAddr, bodyPlain, datetimeStrP, method, uid)
 
     outfile.close()
 
