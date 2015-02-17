@@ -12,12 +12,12 @@ def meeting_invitation(fromAddr, toAddr, body, datetimeStrP, method, uid):
     # login = ""
     # password = ""
     # attendees = ['phommata <phommata@engr.orst.edu>', '\n        Andrew Phommathep <13destinies@gmail.com>']
-    attendees = toAddr
+    attendees = toAddr # takes a tuple
     organizer = "ORGANIZER;CN=organiser:mailto:do.not.reply"+CRLF+" @engr.orst.edu"
     fro = "<do.not.reply@engr.orst.edu>"
 
     ddtstart = datetimeStrP
-    dtoff = datetime.timedelta(hours = 8) # Correct -8 hour offset
+    dtoff = datetime.timedelta(hours = 8) # Correct -8 hour UTC offset correction
     dur = datetime.timedelta(minutes = 15)
     ddtstart = ddtstart + dtoff
     dtend = ddtstart + dur
@@ -50,8 +50,7 @@ def meeting_invitation(fromAddr, toAddr, body, datetimeStrP, method, uid):
           "DTSTART:"+dtstart+CRLF+\
           "DTEND:"+dtend+CRLF+\
           "DTSTAMP:"+dtstamp+CRLF+organizer+CRLF
-    # ical+= "UID:FIXMEUID"+dtstamp+CRLF
-    # ical+= "UID:Kevin D McGrath"+CRLF
+    # UID: Adviser name + " " + date_time
     ical+= "UID:"+ uid + CRLF
     ical+= attendee+\
            "CREATED:"+dtstamp+CRLF+\
