@@ -9,10 +9,11 @@ import os, datetime, time
 
 def meeting_invitation(fromAddr, toAddr, body, datetimeStrP, method, uid):
     CRLF = "\r\n"
+    #fro = fromAddr
+    fro = "<do.not.reply@engr.orst.edu>"
     # attendees = ['phommata <phommata@engr.orst.edu>', '\n        Andrew Phommathep <13destinies@gmail.com>']
     attendees = toAddr # takes a tuple
     organizer = "ORGANIZER;CN=organiser:mailto:do.not.reply"+CRLF+" @engr.orst.edu"
-    fro = "<do.not.reply@engr.orst.edu>"
 
     ddtstart = datetimeStrP
     dtoff = datetime.timedelta(hours = 8) # Correct -8 hour UTC offset correction
@@ -57,7 +58,7 @@ def meeting_invitation(fromAddr, toAddr, body, datetimeStrP, method, uid):
            "LOCATION:"+CRLF+\
            "SEQUENCE:0"+CRLF+\
            "STATUS:"+status+CRLF
-    ical+= "SUMMARY: Advising Meeting " + method + CRLF+\
+    ical+= "SUMMARY: Advising Meeting " + status + CRLF+\
            "TRANSP:OPAQUE"+CRLF+\
            "END:VEVENT"+CRLF+\
            "END:VCALENDAR"+CRLF
