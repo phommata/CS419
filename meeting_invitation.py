@@ -9,8 +9,6 @@ import os,datetime,time
 
 def meeting_invitation(fromAddr, toAddr, body, datetimeStrP, method, uid):
     CRLF = "\r\n"
-    # login = ""
-    # password = ""
     # attendees = ['phommata <phommata@engr.orst.edu>', '\n        Andrew Phommathep <13destinies@gmail.com>']
     attendees = toAddr # takes a tuple
     organizer = "ORGANIZER;CN=organiser:mailto:do.not.reply"+CRLF+" @engr.orst.edu"
@@ -44,7 +42,6 @@ def meeting_invitation(fromAddr, toAddr, body, datetimeStrP, method, uid):
            "PRODID:pyICSParser"+CRLF+\
            "VERSION:2.0"+CRLF+\
            "CALSCALE:GREGORIAN"+CRLF
-    # ical+="METHOD:REQUEST"+CRLF+\
     ical+= "METHOD:"+ method + CRLF+\
           "BEGIN:VEVENT"+CRLF+\
           "DTSTART:"+dtstart+CRLF+\
@@ -68,13 +65,11 @@ def meeting_invitation(fromAddr, toAddr, body, datetimeStrP, method, uid):
     msg = MIMEMultipart('mixed')
     msg['Reply-To']=fro
     msg['Date'] = formatdate(localtime=True)
-    msg['Subject'] = "Advising Meeting " + status #+ dtstart
+    msg['Subject'] = "Advising Meeting " + status
     msg['From'] = fro
     msg['To'] = ",".join(attendees)
 
     # http://stackoverflow.com/questions/10295530/how-to-set-a-charset-in-email-using-smtplib-in-python-2-7
-    # part_email = MIMEText(eml_body.encode("ISO-8859-1"),"plain", "ISO-8859-1")
-    # part_email = MIMEText(eml_body,"html")
     part_email = MIMEText(eml_body,"plain")
     part_cal = MIMEText(ical,'calendar;method=' + method)
 
@@ -93,11 +88,6 @@ def meeting_invitation(fromAddr, toAddr, body, datetimeStrP, method, uid):
     msgAlternative.attach(part_email)
     msgAlternative.attach(part_cal)
 
-    # mailServer = smtplib.SMTP('smtp.gmail.com', 587)
     mailServer = smtplib.SMTP('mail.engr.oregonstate.edu', 587)
-    # mailServer.ehlo()
-    # mailServer.starttls()
-    # mailServer.ehlo()
-    # mailServer.login(login, password)
     mailServer.sendmail(fro, attendees, msg.as_string())
     mailServer.close()
