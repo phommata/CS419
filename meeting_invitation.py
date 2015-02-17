@@ -47,6 +47,7 @@ def meeting_invitation(fromAddr, toAddr, body, datetimeStrP, method, uid):
           "DTSTART:"+dtstart+CRLF+\
           "DTEND:"+dtend+CRLF+\
           "DTSTAMP:"+dtstamp+CRLF+organizer+CRLF
+    # Create UID for meeting invitation
     # UID: Adviser name + " " + date_time
     ical+= "UID:"+ uid + CRLF
     ical+= attendee+\

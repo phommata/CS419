@@ -6,14 +6,17 @@ import meeting_invitation
 
 def main():
     # http://stackoverflow.com/questions/14676375/pipe-email-from-procmail-to-python-script-that-parses-body-and-saves-as-text-fil
+    # Read from command line
     full_msg = sys.stdin.read()
 
     msg = email.message_from_string(full_msg.strip());
 
+    # Parse email
     toAddr   = msg['To']
     fromAddr = msg['From']
     subject  = msg['Subject']
 
+    # Debug print statements: $HOME/mail/logfile.txt
     outfile = open("logfile.txt", 'w')
     sys.stdout = outfile
     print full_msg
@@ -28,7 +31,6 @@ def main():
     print subject
 
     # http://stackoverflow.com/questions/17874360/python-how-to-parse-the-body-from-a-raw-email-given-that-raw-email-does-not
-    b = msg
     body = ""
 
     if msg.is_multipart():
@@ -39,10 +41,12 @@ def main():
     else:
         print msg.get_payload()
         print "!is multipart"
+        body = msg.get_payload()
 
     print "-------------------------------------------------------------------------------\n"
     print body
     print "-------------------------------------------------------------------------------\n"
+    # Parse body plain text
     bodyPlainStart = body.find("Advising")
     bodyPlainEnd = body.find("problems")
     bodyPlain = body[bodyPlainStart:bodyPlainEnd + 8]
@@ -54,51 +58,62 @@ def main():
 
     if confirmed > 0:
         # http://stackoverflow.com/questions/3368969/find-string-between-two-substrings
+        # Parse Advisor FirstName LastName
         advisor = find_between( body, "Advising Signup with ", " confirmed" )
         print "advisor confirmed " + advisor
         advisorClean = re.split(r', | ', advisor)
         advisorCleanName = advisorClean[len(advisorClean) - 1] + " " + advisorClean[0]
         print advisorCleanName
 
+        # Parse Student FirstName LastName
         student = find_between( body, "Name: ", "Email:" )
         print "student confirmed " + student
         studentClean = re.split(r', | ', student)
         studentCleanName = studentClean[len(studentClean) - 1] + " " + studentClean[0]
         print studentCleanName
 
+        # Set meeting invitation method
         method = "REQUEST"
     elif cancellation > 0:
+        # Parse Advisor FirstName LastName
         advisor = find_between( body, "Advising Signup with ", " CANCELLED" )
         print "advisor CANCELLED " + advisor
         advisorClean = re.split(r', | ', advisor)
         advisorCleanName = advisorClean[len(advisorClean) - 1] + " " + advisorClean[0]
         print advisorCleanName
 
+        # Parse Student FirstName LastName
         student = find_between( body, "Name: ", "Email:" )
         print "student CANCELLED " + student
         studentClean = re.split(r', | ', student)
         studentCleanName = studentClean[len(studentClean) - 1] + " " + studentClean[0]
         print studentCleanName
 
+        # Set meeting invitation method
         method = "CANCEL"
     else:
         print "No confirmed/CANCELLED in body?!"
 
+    # Parse date
     dateStr = find_between( body, "day, ", "Time: " )
     print dateStr
     dateStr = re.sub(r"(,|st|nd|rd|th)", "", dateStr)
     print dateStr
 
+    # Parse start time
     timeStr = find_between( body, "Time: ", " - " )
     print timeStr
 
+    # Parse datetime
     datetimeStr = dateStr + " " + timeStr
     datetimeStrP = datetime.datetime.strptime(datetimeStr, "%B %d %Y %I:%M%p")
-    print datetimeStrP
+    print datetimeStrP # Datetime format for db "YYYY-MM-DD HH:MM:SS"
 
+    # Create UID for meeting invitation
     uid = advisorCleanName + " " + str(datetimeStrP)
     print uid
 
+    # Pass args to meeting_invitation email
     meeting_invitation.meeting_invitation(fromAddr, toAddr, bodyPlain, datetimeStrP, method, uid)
 
     outfile.close()
