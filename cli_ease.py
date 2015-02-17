@@ -28,22 +28,19 @@ def printMenu():
 #and advisor's name as normal string. 
 #Returns the number of rows / appointments
 def readDatabase(str_advisor, advisor):
-	sql_read = "SELECT datetime, ad_name, st_name FROM advising_schedule WHERE advising_schedule.ad_name = " + str_advisor + "\n"
-	#screen.addstr("SQL query is: " + sql_read) #Debugging checking that SQL query appeared the way it should
-	try:
-		screen.addstr("\nSchedule for " + advisor + "\n")
-		cursor.execute(sql_read)
-		results = cursor.fetchall()
-		num = 0
-		for row in results:
-			num = num + 1
-			appdate_time = row[0]
-			aname = row[1]
-			sname = row[2]
-			newdate_time = str(appdate_time) #must change from object to string
-			screen.addstr("Appointment with student: " + sname + " On: " + newdate_time + "\n")
-	except:
-		screen.addstr("No Advisor named: " + name + "\n")
+	sql_read = "SELECT date_time, ad_name, st_name FROM advising_schedule WHERE advising_schedule.ad_name = " + str_advisor + "\n"
+	#screen.addstr("SQL query is: " + sql_read) #Debugging SQL query 
+	screen.addstr("\nSchedule for " + advisor + "\n")
+	cursor.execute(sql_read)
+	results = cursor.fetchall()
+	num = 0
+	for row in results:
+		num = num + 1
+		appdate_time = row[0]
+		aname = row[1]
+		sname = row[2]
+		newdate_time = str(appdate_time) #must change from object to string
+		screen.addstr("Appointment with student: " + sname + " On: " + newdate_time + "\n")
 	return num;
 
 #Think once the files Andrew are working on will be able to call those instead
@@ -78,19 +75,19 @@ def cancelApp(str_advisor, advisor):
 	screen.addstr("\nUsing 1 through " + str_tRows + " select the number that coincides with the appointment you want to cancel.\n")
 	select = screen.getstr()
 	print select
-	sql_read = "SELECT datetime, ad_name, st_name FROM advising_schedule WHERE advising_schedule.ad_name = " + str_advisor + "\n"
+	sql_read = "SELECT date_time, ad_name, st_name FROM advising_schedule WHERE advising_schedule.ad_name = " + str_advisor + "\n"
 	#screen.addstr("SQL query is: " + sql_read) #Debugging checking that SQL query appeared the way it should
 	cursor.execute(sql_read)
 	results = cursor.fetchall()
-	num = 0
+	num2 = 0
 	for row in results:
-		num = num + 1
+		num2 = num2 + 1
 		appdate_time = row[0]
 		aname = row[1]
 		sname = row[2]
 		newdate_time = str(appdate_time) #must change from object to string
-		if num == int(select):
-			screen.addstr("STOP HERE " + str(num) + "\n" )
+		if num2 == int(select):
+			screen.addstr("STOP HERE " + str(num2) + "\n" )
 			str_s_name = "'" + sname + "'"
 			sql_emails = "SELECT ad_email, st_email FROM advising_schedule WHERE ad_name = " + str_advisor + " AND st_name = " + str_s_name + ";\n"
 			screen.addstr("sql emails looks like this: \n" + sql_emails + "\n")
@@ -100,26 +97,23 @@ def cancelApp(str_advisor, advisor):
 				adv_email = row[0]
 				stud_email = row[1]
 			screen.addstr("Sending Cancellation Email to " + adv_email + " and " + stud_email + " for " + newdate_time + "\n")
-			screen.addstr("Advisor = " + str_advisor + ", Student name = " + str_s_name + " plus date = " + newdate_time + "\n")
+			str_date = "'" + newdate_time + "'"
+			sql_del = "DELETE FROM advising_schedule WHERE ad_name = " + str_advisor + " AND st_name = " + str_s_name + " AND date_time = " + str_date + "\n"
+			screen.addstr("SQL DELETE = \n" + sql_del + "\n")
 			screen.addstr("Are you sure you want to continue? Y/N\n")
 			confirm = screen.getch()
 			if confirm == ord("y") or confirm == ord("Y"):
 				screen.addstr("\nAppointment is Cancelled\n")
-				
-				sql_del = "DELETE FROM advising_schedule WHERE ad_name = " + str_advisor + " AND st_name = " + str_s_name + " AND datetime = " + newdate_time + ";\n"
-				#screen.addstr("THis is what sql delete looks like\n" + sql_del + "\n")
 				cursor.execute(sql_del)
 				screen.addstr("Do I get here?\n")
-
 				emailTemp(stud_email, adv_email, sname, advisor, newdate_time)
 			elif confirm == ord("n") or confirm == ("N"):
 				screen.addstr("\nAppointment has not been Cancelled\n")
 			else:
 				screen.addstr("\nIncorrect input. Appointment will not be Cancelled\n")
 			break
-	str_num = str(num)
+	str_num = str(num2)
 	screen.addstr("num of rows = " + str_num + "\n")
-	return num;
 
 
 while True:
@@ -129,7 +123,7 @@ while True:
 	if event == ord("3"):  #3 = They want to exit CLI client
 		break
 	elif event == ord("1"): #1 They want to read their advising schedule
-		value = readDatabase(name2, name) #Don't really need num of rows here
+		readDatabase(name2, name)
 	elif event == ord("2"): #Cancel appointment
-		val2 = cancelApp(name2, name)
+		cancelApp(name2, name)
 curses.endwin()
