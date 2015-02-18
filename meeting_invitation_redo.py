@@ -5,21 +5,22 @@ from email.MIMEBase import MIMEBase
 from email.MIMEText import MIMEText
 from email.Utils import COMMASPACE, formatdate
 from email import Encoders
-import os, datetime, time
+import os, datetime
 
 def meeting_invitation(toAddr, body, datetimeStrP, method, uid):
 # def meeting_invitation():
     CRLF = "\r\n"
-    fro = "<do.not.reply@engr.orst.edu>"
-    attendees = toAddr # takes a tuple
+    # login = ""
+    # password = ""
     # attendees = ['phommata <Phommata@engr.orst.edu>', '\n        Andrew Phommathep <andrew.phommathep@gmail.com>', '\n        Andrew Phommathep <13destinies@gmail.com>']
-    # body = "Advising Signup with McGrath, D Kevin confirmed...\r\n" \
-    #        "Please contact support@engr.oregonstate.edu if you experience problems"
+    attendees = toAddr
     organizer = "ORGANIZER;CN=organiser:mailto:do.not.reply"+CRLF+" @engr.orst.edu"
+    fro = "<do.not.reply@engr.orst.edu>"
 
-    ddtstart = datetimeStrP
+    # ddtstart = datetime.datetime.now()
     # ddtstart = "2015-02-18 15:00:00"
     # ddtstart = datetime.datetime.strptime(ddtstart, "%Y-%m-%d %H:%M:%S")
+    ddtstart = datetimeStrP
     dtoff = datetime.timedelta(hours = 8) # Correct -8 hour UTC offset correction
     dur = datetime.timedelta(minutes = 15)
     ddtstart = ddtstart + dtoff
@@ -28,15 +29,12 @@ def meeting_invitation(toAddr, body, datetimeStrP, method, uid):
     dtstart = ddtstart.strftime("%Y%m%dT%H%M%SZ")
     dtend = dtend.strftime("%Y%m%dT%H%M%SZ")
 
-    # method = "REQUEST"
-    # uid = "Kevin McGrath 2015-02-18 15:00:00"
-
     if method == "REQUEST":
         status = "CONFIRMED"
     elif method == "CANCEL":
         status = "CANCELLED"
 
-    description = "DESCRIPTION: " + body +CRLF
+    description = "DESCRIPTION: test invitation from pyICSParser"+CRLF
     attendee = ""
     for att in attendees:
         attendee += "ATTENDEE;CUTYPE=INDIVIDUAL;" \
@@ -50,16 +48,16 @@ def meeting_invitation(toAddr, body, datetimeStrP, method, uid):
            "PRODID:pyICSParser"+CRLF+\
            "VERSION:2.0"+CRLF+\
            "CALSCALE:GREGORIAN"+CRLF
-    ical+= "METHOD:"+ method + CRLF+\
+    ical+="METHOD:"+method+CRLF+\
           "BEGIN:VEVENT"+CRLF+\
           "DTSTART:"+dtstart+CRLF+\
           "DTEND:"+dtend+CRLF+\
           "DTSTAMP:"+dtstamp+CRLF+organizer+CRLF
     # http://www.baryudin.com/blog/sending-outlook-appointments-python.html
-    # Create UID for meeting invitation
-    # UID: Adviser name + " " + date_time
     # ical+= "UID:Kevin McGrath 2015-02-18 15:00:00"+CRLF
-    ical+= "UID:"+ uid + CRLF
+    uid = "Kevin McGrath 2015-02-18 15:00:00"
+    ical+= "UID:"+uid+CRLF
+    # ical['uid']=uid+CRLF
     ical+= attendee+\
            "CREATED:"+dtstamp+CRLF+\
            description+\
@@ -67,22 +65,28 @@ def meeting_invitation(toAddr, body, datetimeStrP, method, uid):
            "LOCATION:"+CRLF+\
            "SEQUENCE:0"+CRLF+\
            "STATUS:"+status+CRLF
-    ical+= "SUMMARY: Advising Meeting " + status + CRLF+\
+    ical+= "SUMMARY:test "+ddtstart.strftime("%Y%m%d @ %H:%M")+CRLF+\
            "TRANSP:OPAQUE"+CRLF+\
            "END:VEVENT"+CRLF+\
            "END:VCALENDAR"+CRLF
 
+    # eml_body = "Advising Signup with McGrath, D Kevin confirmed\r\n" \
+    #           "Name: REDACTED\r\n" \
+    #           "Email: REDACT@engr.orst.edu\r\n" \
+    #           "Date: Wednesday, November 21st, 2012\r\n" \
+    #           "Time: 1:00pm - 1:15pm\r\n\r\n" \
+    #           "Please contact support@engr.oregonstate.edu if you experience problems"
     eml_body = body
     msg = MIMEMultipart('mixed')
     msg['Reply-To']=fro
     msg['Date'] = formatdate(localtime=True)
-    msg['Subject'] = "Advising Meeting " + status
+    msg['Subject'] = "Advising Meeting "+ status #+ dtstart
     msg['From'] = fro
     msg['To'] = ",".join(attendees)
 
-    # http://stackoverflow.com/questions/10295530/how-to-set-a-charset-in-email-using-smtplib-in-python-2-7
-    part_email = MIMEText(eml_body,"plain")
-    part_cal = MIMEText(ical,'calendar;method=' + method)
+    # part_email = MIMEText(eml_body.encode("ISO-8859-1"),"plain", "ISO-8859-1")
+    part_email = MIMEText(eml_body, "plain")
+    part_cal = MIMEText(ical,'calendar;method='+method)
 
     msgAlternative = MIMEMultipart('alternative')
     msg.attach(msgAlternative)
@@ -99,6 +103,11 @@ def meeting_invitation(toAddr, body, datetimeStrP, method, uid):
     msgAlternative.attach(part_email)
     msgAlternative.attach(part_cal)
 
+    # mailServer = smtplib.SMTP('smtp.gmail.com', 587)
     mailServer = smtplib.SMTP('mail.engr.oregonstate.edu', 587)
+    # mailServer.ehlo()
+    # mailServer.starttls()
+    # mailServer.ehlo()
+    # mailServer.login(login, password)
     mailServer.sendmail(fro, attendees, msg.as_string())
     mailServer.close()

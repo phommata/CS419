@@ -5,18 +5,20 @@ from email.MIMEBase import MIMEBase
 from email.MIMEText import MIMEText
 from email.Utils import COMMASPACE, formatdate
 from email import Encoders
-import os,datetime
+import os, datetime
 
 # def meeting_invitation(adviserName, studentName, from, to, subject, datetimeStr):
 CRLF = "\r\n"
 # login = ""
 # password = ""
-# attendees = ["phommata@engr.orst.edu"]
-attendees = ["phommata@onid.oregonstate.edu"]
+# attendees = ["13destinies@gmail.com", "phommata@engr.orst.edu"]
+attendees = ['phommata <Phommata@engr.orst.edu>', '\n        Andrew Phommathep <andrew.phommathep@gmail.com>', '\n        Andrew Phommathep <13destinies@gmail.com>']
 organizer = "ORGANIZER;CN=organiser:mailto:do.not.reply"+CRLF+" @engr.orst.edu"
 fro = "<do.not.reply@engr.orst.edu>"
 
 ddtstart = datetime.datetime.now()
+# ddtstart = "2015-02-18 15:00:00"
+# ddtstart = datetime.datetime.strptime(ddtstart, "%Y-%m-%d %H:%M:%S")
 dtoff = datetime.timedelta(days = 1)
 dur = datetime.timedelta(hours = 1)
 dur = datetime.timedelta(minutes = 1)
@@ -69,11 +71,12 @@ eml_body_bin = "This is the email body in binary - two steps"
 msg = MIMEMultipart('mixed')
 msg['Reply-To']=fro
 msg['Date'] = formatdate(localtime=True)
-msg['Subject'] = "Advising Meeting CANCELLED" #+ dtstart
+msg['Subject'] = "Advising Meeting CONFIRMED" #+ dtstart
 msg['From'] = fro
 msg['To'] = ",".join(attendees)
 
-part_email = MIMEText(eml_body.encode("ISO-8859-1"),"plain", "ISO-8859-1")
+# part_email = MIMEText(eml_body.encode("ISO-8859-1"),"plain", "ISO-8859-1")
+part_email = MIMEText(eml_body, "plain")
 part_cal = MIMEText(ical,'calendar;method=REQUEST')
 
 msgAlternative = MIMEMultipart('alternative')
