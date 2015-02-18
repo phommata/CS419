@@ -53,11 +53,9 @@ def meeting_invitation(toAddr, body, datetimeStrP, method, uid):
           "DTSTART:"+dtstart+CRLF+\
           "DTEND:"+dtend+CRLF+\
           "DTSTAMP:"+dtstamp+CRLF+organizer+CRLF
-    # http://www.baryudin.com/blog/sending-outlook-appointments-python.html
-    # ical+= "UID:Kevin McGrath 2015-02-18 15:00:00"+CRLF
-    uid = "Kevin McGrath 2015-02-18 15:00:00"
-    ical+= "UID:"+uid+CRLF
-    # ical['uid']=uid+CRLF
+    # ical+= "UID:FIXMEUID"+dtstamp+CRLF
+    ical+= "UID:Kevin D McGrath"+CRLF
+    # ical+= "UID:"+uid+CRLF
     ical+= attendee+\
            "CREATED:"+dtstamp+CRLF+\
            description+\

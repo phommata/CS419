@@ -2,8 +2,8 @@ import sys
 import email
 import re
 import datetime
-# import meeting_invitation
-import meeting_invitation_redo
+import meeting_invitation
+# import meeting_invitation_redo
 
 def main():
     # http://stackoverflow.com/questions/14676375/pipe-email-from-procmail-to-python-script-that-parses-body-and-saves-as-text-fil
@@ -115,8 +115,8 @@ def main():
     print uid
 
     # Pass args to meeting_invitation email
-    # meeting_invitation.meeting_invitation(toAddr, bodyPlain, datetimeStrP, method, uid)
-    meeting_invitation_redo.meeting_invitation(toAddr, bodyPlain, datetimeStrP, method, uid)
+    meeting_invitation.meeting_invitation(toAddr, bodyPlain, datetimeStrP, method, uid)
+    # meeting_invitation_redo.meeting_invitation(toAddr, bodyPlain, datetimeStrP, method, uid)
 
     outfile.close()
 

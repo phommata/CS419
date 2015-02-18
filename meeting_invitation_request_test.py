@@ -12,7 +12,7 @@ CRLF = "\r\n"
 # login = ""
 # password = ""
 # attendees = ["13destinies@gmail.com", "phommata@engr.orst.edu"]
-attendees = ['phommata <Phommata@engr.orst.edu>', '\n        Andrew Phommathep <andrew.phommathep@gmail.com>', '\n        Andrew Phommathep <13destinies@gmail.com>']
+attendees = ['Andrew Phommathep <13destinies@gmail.com>', '\n        Andrew Phommathep <andrew.phommathep@gmail.com>', '\n        phommata <Phommata@engr.orst.edu>']
 organizer = "ORGANIZER;CN=organiser:mailto:do.not.reply"+CRLF+" @engr.orst.edu"
 fro = "<do.not.reply@engr.orst.edu>"
 
