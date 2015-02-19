@@ -12,7 +12,7 @@ CRLF = "\r\n"
 # login = ""
 # password = ""
 # attendees = ["13destinies@gmail.com", "phommata@engr.orst.edu"]
-attendees = ['Andrew Phommathep <13destinies@gmail.com>', '\n        Andrew Phommathep <andrew.phommathep@gmail.com>', '\n        phommata <Phommata@engr.orst.edu>']
+attendees = ['Andrew Phommathep <13destinies@gmail.com>', '\n        Andrew Phommathep <phommata@onid.oregonstate.edu>', '\n        phommata <Phommata@engr.orst.edu>']
 organizer = "ORGANIZER;CN=organiser:mailto:do.not.reply"+CRLF+" @engr.orst.edu"
 fro = "<do.not.reply@engr.orst.edu>"
 
@@ -48,7 +48,7 @@ ical+="METHOD:REQUEST"+CRLF+\
       "DTEND:"+dtend+CRLF+\
       "DTSTAMP:"+dtstamp+CRLF+organizer+CRLF
 # ical+= "UID:FIXMEUID"+dtstamp+CRLF
-ical+= "UID:Kevin D McGrath"+CRLF
+ical+= "UID:Kevin D McGrath 2015-02-18 15:00:00"+CRLF
 ical+= attendee+\
        "CREATED:"+dtstamp+CRLF+\
        description+\

@@ -15,7 +15,7 @@ def meeting_invitation(toAddr, body, datetimeStrP, method, uid):
     # attendees = ['phommata <Phommata@engr.orst.edu>', '\n        Andrew Phommathep <andrew.phommathep@gmail.com>', '\n        Andrew Phommathep <13destinies@gmail.com>']
     # body = "Advising Signup with McGrath, D Kevin confirmed...\r\n" \
     #        "Please contact support@engr.oregonstate.edu if you experience problems"
-    organizer = "ORGANIZER;CN=organiser:mailto:do.not.reply"+CRLF+" @engr.orst.edu"
+    organizer = "ORGANIZER;CN=organiser:mailto:do.not.reply@engr.orst.edu"
 
     ddtstart = datetimeStrP
     # ddtstart = "2015-02-18 15:00:00"

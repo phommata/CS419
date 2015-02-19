@@ -54,8 +54,8 @@ def meeting_invitation(toAddr, body, datetimeStrP, method, uid):
           "DTEND:"+dtend+CRLF+\
           "DTSTAMP:"+dtstamp+CRLF+organizer+CRLF
     # ical+= "UID:FIXMEUID"+dtstamp+CRLF
-    ical+= "UID:Kevin D McGrath"+CRLF
-    # ical+= "UID:"+uid+CRLF
+    # ical+= "UID:Kevin D McGrath 2015-02-18 15:00:00"+CRLF
+    ical+= "UID:"+uid+CRLF
     ical+= attendee+\
            "CREATED:"+dtstamp+CRLF+\
            description+\
