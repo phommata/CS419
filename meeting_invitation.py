@@ -36,7 +36,7 @@ def meeting_invitation(toAddr, body, datetimeStrP, method, uid):
     elif method == "CANCEL":
         status = "CANCELLED"
 
-    description = "DESCRIPTION: " + body +CRLF
+    description = "DESCRIPTION: " + status +CRLF
     attendee = ""
     for att in attendees:
         attendee += "ATTENDEE;CUTYPE=INDIVIDUAL;" \

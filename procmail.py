@@ -115,8 +115,8 @@ def main():
     print uid
 
     # Pass args to meeting_invitation email
-    # meeting_invitation.meeting_invitation(toAddr, bodyPlain, datetimeStrP, method, uid)
-    meeting_invitation_test.meeting_invitation(toAddr, bodyPlain, datetimeStrP, method, uid)
+    meeting_invitation.meeting_invitation(toAddr, bodyPlain, datetimeStrP, method, uid)
+    # meeting_invitation_test.meeting_invitation(toAddr, bodyPlain, datetimeStrP, method, uid)
 
     outfile.close()
 
