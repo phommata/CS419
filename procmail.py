@@ -4,6 +4,30 @@ import re
 import datetime
 import meeting_invitation
 import meeting_invitation_test
+import mysql.connector
+from mysql.connector import errorcode
+
+# Establish connection to database
+# http://dev.mysql.com/doc/connector-python/en/connector-python-example-connecting.html
+config = {
+	'user': 'cs419-g6',
+	'password': 'group6data', 
+	'host': 'mysql.cs.orst.edu',
+	'database': 'cs419-g6',
+	'raise_on_warnings': True,
+}
+
+try:
+  cnx = mysql.connector.connect(**config)
+  cursor = cnx.cursor()
+
+except mysql.connector.Error as err:
+	if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
+		print("User name or password incorrect")
+	elif err.errno == errorcode.ER_BAD_DB_ERROR:
+		print("Database does not exist")
+	else:
+		print(err)
 
 def main():
     # http://stackoverflow.com/questions/14676375/pipe-email-from-procmail-to-python-script-that-parses-body-and-saves-as-text-fil
@@ -118,7 +142,25 @@ def main():
     meeting_invitation.meeting_invitation(toAddr, bodyPlain, datetimeStrP, method, uid)
     # meeting_invitation_test.meeting_invitation(toAddr, bodyPlain, datetimeStrP, method, uid)
 
+    # If appointment confirmation, add to database. Else if cancellation, remove from database
+    if confirmed > 0:
+        addToDatabase(advisorCleanName, studentCleanName, toAddr, fromAddr, datetimeStrP)
+    elif cancellation > 0:
+		removeFromDatabase(toAddr, fromAddr, datetimeStrP)
+	
+    cursor.close()
+    cnx.close()
     outfile.close()
+
+def addToDatabase(advisorCleanName, studentCleanName, toAddr, fromAddr, datetimeStrP):
+    add_meeting = ("INSERT INTO advising_schedule (ad_name, st_name, ad_email, st_email, date_time) VALUES (%s, %s, %s, %s, %s)")
+    meeting_details = (advisorCleanName, studentCleanName, toAddr, fromAddr, datetimeStrP)
+    cursor.execute(add_meeting, meeting_details)
+
+def removeFromDatabase(toAddr, fromAddr, datetimeStrP):
+    remove_meeting = ("DELETE FROM advising_schedule WHERE ad_email = %s AND st_email = %s AND date_time = %s")
+    meeting_details = (toAddr, fromAddr, datetimeStrP)
+    cursor.execute(remove_meeting, meeting_details)
 
 def find_between( s, first, last ):
     try:
