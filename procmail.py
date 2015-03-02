@@ -4,30 +4,10 @@ import re
 import datetime
 import meeting_invitation
 import meeting_invitation_test
-import mysql.connector
-from mysql.connector import errorcode
+import MySQLdb
 
-# Establish connection to database
-# http://dev.mysql.com/doc/connector-python/en/connector-python-example-connecting.html
-config = {
-	'user': 'cs419-g6',
-	'password': 'group6data', 
-	'host': 'mysql.cs.orst.edu',
-	'database': 'cs419-g6',
-	'raise_on_warnings': True,
-}
-
-try:
-  cnx = mysql.connector.connect(**config)
-  cursor = cnx.cursor()
-
-except mysql.connector.Error as err:
-	if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
-		print("User name or password incorrect")
-	elif err.errno == errorcode.ER_BAD_DB_ERROR:
-		print("Database does not exist")
-	else:
-		print(err)
+db = MySQLdb.connect("mysql.eecs.oregonstate.edu", "cs419-g6", "group6data", "cs419-g6")
+cursor = db.cursor()
 
 def main():
     # http://stackoverflow.com/questions/14676375/pipe-email-from-procmail-to-python-script-that-parses-body-and-saves-as-text-fil
