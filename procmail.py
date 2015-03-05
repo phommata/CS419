@@ -30,8 +30,8 @@ def main():
     print "-------------------------------------------------------------------------------\n"
 
     print toAddr
-    toAddr = re.split(r',', toAddr)
-    print toAddr
+    toAddrTuple = re.split(r',', toAddr)
+    print toAddrTuple
     print fromAddr
     print subject
 
@@ -119,7 +119,7 @@ def main():
     print uid
 
     # Pass args to meeting_invitation email
-    meeting_invitation.meeting_invitation(toAddr, bodyPlain, datetimeStrP, method, uid)
+    meeting_invitation.meeting_invitation(toAddrTuple, bodyPlain, datetimeStrP, method, uid)
     # meeting_invitation_test.meeting_invitation(toAddr, bodyPlain, datetimeStrP, method, uid)
 
     # If appointment confirmation, add to database. Else if cancellation, remove from database
@@ -129,7 +129,6 @@ def main():
 		removeFromDatabase(toAddr, fromAddr, datetimeStrP)
 	
     cursor.close()
-    cnx.close()
     outfile.close()
 
 def addToDatabase(advisorCleanName, studentCleanName, toAddr, fromAddr, datetimeStrP):
