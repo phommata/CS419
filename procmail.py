@@ -3,7 +3,7 @@ import email
 import re
 import datetime
 import meeting_invitation
-import meeting_invitation_test
+# import meeting_invitation_test
 import MySQLdb
 
 db = MySQLdb.connect("mysql.eecs.oregonstate.edu", "cs419-g6", "group6data", "cs419-g6")
