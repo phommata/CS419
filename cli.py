@@ -60,7 +60,7 @@ def readDatabase(str_advisor, advisor):
 		screen.addstr("\tNo Adviser by name of " + name + "\n")
 	return num;
 
-#Think once the files Andrew are working on will be able to call those instead
+#Send email using meeting invite function
 def emailTemp(stu_email, ad_email, student, adviser, date_time):
 	rec = [stu_email, ad_email]
 	body = "Advising Signup with " + adviser + " CANCELLED\nName: " + student + "\nEmail: " + stu_email + "\nDate: " + str(date_time) + "\n\nPlease contact support@engr.oregonstate.edu if you experience problems.\n"
@@ -74,7 +74,7 @@ def emailTemp(stu_email, ad_email, student, adviser, date_time):
 def cancelApp(str_advisor, advisor):
 	t_rows = readDatabase(str_advisor, advisor)
 	str_tRows = str(t_rows)
-	screen.addstr("\n\tUsing 1-" + str_tRows + " select the appointment you want to cancel.\n")
+	screen.addstr("\n\tUsing 1-" + str_tRows + " select the appointment you want to cancel.\n\tTo return to menu: Press 0.\n")
 	select = screen.getstr()
 	try:
 		sel_int = int(select)
@@ -83,6 +83,9 @@ def cancelApp(str_advisor, advisor):
 		return;
 	if int(select) > int(t_rows):
 		screen.addstr("\tThe number you have selected is too high.\n")
+	if int(select) == 0:
+		screen.addstr("\tReturning to Menu.\n")
+		return;
 	elif int(select) > 0 and int(select) <= int(t_rows): 
 		#screen.addstr("Get Here?\n")
 		sql_read = "SELECT date_time, ad_name, st_name FROM advising_schedule WHERE advising_schedule.ad_name = " + str_advisor + " ORDER BY date_time\n"
@@ -95,6 +98,11 @@ def cancelApp(str_advisor, advisor):
 			appdate_time = row[0]
 			aname = row[1]
 			sname = row[2]
+			m = str(appdate_time.month)
+			d = str(appdate_time.day)
+			y = str(appdate_time.year)
+			h = str(appdate_time.hour)
+			mi = str(appdate_time.minute)
 			newdate_time = str(appdate_time) #must change from object to string
 			if num2 == int(select):
 				#screen.addstr("num == select\n")
@@ -106,20 +114,20 @@ def cancelApp(str_advisor, advisor):
 				for row in emails:
 					adv_email = row[0]
 					stud_email = row[1]
-				screen.addstr("\tSending Cancellation Email to " + adv_email + " and\n " + stud_email + " for " + newdate_time + "\n")
+				screen.addstr("\tCanceling appointment with " + sname + " on " + m + "/" + d + "/" + y + " at " + h + ":" + mi + "\n")
 				str_date = "'" + newdate_time + "'"
 				sql_del = "DELETE FROM advising_schedule WHERE ad_name = " + str_advisor + " AND st_name = " + str_s_name + " AND date_time = " + str_date + "\n"
 				#screen.addstr("SQL DELETE = \n" + sql_del + "\n")
 				screen.addstr("\tAre you sure you want to continue? Y/N\n")
 				confirm = screen.getch()
 				if confirm == ord("y") or confirm == ord("Y"):
-					screen.addstr("\n\tAppointment is Cancelled\n")
+					screen.addstr("\n\tAppointment is Cancelled. Emails have been sent.\n")
 					cursor.execute(sql_del)
 					emailTemp(stud_email, adv_email, sname, advisor, appdate_time)
 				elif confirm == ord("n") or confirm == ("N"):
-					screen.addstr("\n\tAppointment has not been Cancelled\n")
+					screen.addstr("\n\tAppointment has not been Cancelled.\n")
 				else:
-					screen.addstr("\n\tInvalid input. Appointment will not be Cancelled\n")
+					screen.addstr("\n\tInvalid input. Appointment will not be Cancelled.\n")
 				break
 	
 	return;
@@ -131,8 +139,14 @@ def main():
 	name = ""
 	name2 = ""
 	while True:
-		screen.addstr("\tTo begin please provide your first and last name.\n") #Need their name in every option, so might as well only ask for it once.
+		screen.addstr("\tTo begin please provide your first and last name. ") #Need their name in every option, so might as well only ask for it once.
+		screen.addstr("To exit: Press e\n")
 		name = screen.getstr() #get the string they typed
+		if name == "e":
+			cursor.close()
+			db.close()
+			curses.endwin()
+			return;
 		name2 = "'" + name + "'" #force name into a string so it works with the SQL queries
 		stat = realName(name2) #check provided name is in database
 		if stat == 0: #keep asking til name is right
@@ -149,7 +163,10 @@ def main():
 			readDatabase(name2, name)
 		elif event == ord("2"): #Cancel appointment
 			cancelApp(name2, name)
+	cursor.close()
+	db.close()
 	curses.endwin()
+	return;
 
 if __name__ == "__main__":
 	main()
