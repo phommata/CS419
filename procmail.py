@@ -17,7 +17,7 @@ def main():
     msg = email.message_from_string(full_msg.strip());
 
     # Parse email
-    toAddr   = msg['To']
+    toAddrOrig   = msg['To'].strip()
     fromAddr = msg['From']
     subject  = msg['Subject']
 
@@ -29,11 +29,16 @@ def main():
     print msg
     print "-------------------------------------------------------------------------------\n"
 
-    print toAddr
-    toAddrTuple = re.split(r',', toAddr)
-    print toAddrTuple
-    print fromAddr
-    print subject
+    # Adviser's e-mail
+    print 'toAddr: ' + toAddrOrig
+    toAddr = find_between_r(toAddrOrig, ',', '.edu')
+    toAddr = toAddr.strip()
+    print 'toAddr: ' + toAddr
+
+    toAddrTuple = re.split(r',', toAddrOrig)
+    print 'toAddrTuple: ' + str(toAddrTuple)
+    print 'fromAddr: ' + fromAddr
+    print 'subject: ' + subject
 
     # http://stackoverflow.com/questions/17874360/python-how-to-parse-the-body-from-a-raw-email-given-that-raw-email-does-not
     body = ""
@@ -74,7 +79,7 @@ def main():
         student = find_between( body, "Name: ", "Email:" )
         print "student confirmed " + student
         studentClean = re.split(r', | ', student)
-        studentCleanName = studentClean[len(studentClean) - 1] + " " + studentClean[0]
+        studentCleanName = studentClean[1] + " " + studentClean[0]
         print studentCleanName
 
         # Set meeting invitation method
@@ -84,14 +89,14 @@ def main():
         advisor = find_between( body, "Advising Signup with ", " CANCELLED" )
         print "advisor CANCELLED " + advisor
         advisorClean = re.split(r', | ', advisor)
-        advisorCleanName = advisorClean[len(advisorClean) - 1] + " " + advisorClean[0]
+        advisorCleanName = advisorClean[1] + " " + advisorClean[0]
         print advisorCleanName
 
         # Parse Student FirstName LastName
         student = find_between( body, "Name: ", "Email:" )
         print "student CANCELLED " + student
         studentClean = re.split(r', | ', student)
-        studentCleanName = studentClean[len(studentClean) - 1] + " " + studentClean[0]
+        studentCleanName = studentClean[1] + " " + studentClean[0]
         print studentCleanName
 
         # Set meeting invitation method
@@ -146,6 +151,14 @@ def find_between( s, first, last ):
         start = s.index( first ) + len( first )
         end = s.index( last, start )
         return s[start:end].strip()
+    except ValueError:
+        return ""
+
+def find_between_r( s, first, last ):
+    try:
+        start = s.rindex( first ) + len( first )
+        # end = s.rindex( last, start )
+        return s[start:len(s)]
     except ValueError:
         return ""
 
