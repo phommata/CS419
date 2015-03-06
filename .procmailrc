@@ -22,5 +22,4 @@ VERBOSE=YES
 :0
 * ^Subject:.*Advising Signup*
  | /usr/bin/python /nfs/stak/students/p/phommata/labs/cs419/procmail.py
-# | /usr/bin/python /nfs/stak/students/p/phommata/labs/cs419/benHobbs-cs419-master/process_mail2.py
 # /nfs/stak/students/p/phommata/mail
