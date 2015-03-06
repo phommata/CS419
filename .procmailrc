@@ -15,3 +15,4 @@ VERBOSE=YES
 :0
 * ^Subject:.*Advising Signup*
  | /usr/bin/python /nfs/stak/students/p/phommata/labs/cs419/procmail.py
+ 
