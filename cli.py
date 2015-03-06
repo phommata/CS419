@@ -32,6 +32,7 @@ def printMenu():
 	selection = screen.getch()
 	return selection;
 
+
 #function to handle the reading of the database
 #2 parameters, advisor's name as a string with literal quotes 
 #and advisor's name as normal string. 
@@ -45,11 +46,16 @@ def readDatabase(str_advisor, advisor):
 		num = 0
 		for row in results:
 			num = num + 1
-			appdate_time = row[0]
+			d_t = row[0]
 			aname = row[1]
 			sname = row[2]
-			newdate_time = str(appdate_time) #must change from object to string
-			screen.addstr("\n\tAppointment " + str(num) + " with: " + sname + " On: " + newdate_time + "\n")
+			m = str(d_t.month)
+			d = str(d_t.day)
+			y = str(d_t.year)
+			h = str(d_t.hour)
+			mi = str(d_t.minute)
+			newdate_time = str(d_t) #must change from object to string
+			screen.addstr("\n\tAppointment " + str(num) + " with: " + sname + " On: " + m + "/" + d + "/" + y + " At: " + h + ":" + mi + "\n")
 	except:
 		screen.addstr("\tNo Adviser by name of " + name + "\n")
 	return num;
@@ -117,6 +123,8 @@ def cancelApp(str_advisor, advisor):
 				break
 	
 	return;
+
+
 
 def main():
 	screen.addstr("\tWelcome to the Simplified Advising Scheduling System\n")
