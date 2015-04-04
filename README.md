@@ -2,10 +2,10 @@
 
 Simplified Advising Scheduling in Python: 
 
-• procmail filter 
+• procmail filter to filter OSU web form email
 
-• curses based Python CLI 
+• curses based Python CLI to manage advising schedule
 
-• MySQL database to create/cancel 
+• MySQL database to create/cancel advising appointment
 
 • Send meeting invitation to advisor.
